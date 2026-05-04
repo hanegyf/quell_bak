@@ -34,7 +34,7 @@ private:
   size_t encode_bits(const DynamicArray<size_t> &bits) const;
 
 public:
-  Backned();
+  Backend();
 
   void load(const String &filepath);
   void run(RNG &rng);

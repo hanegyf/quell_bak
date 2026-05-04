@@ -15,6 +15,7 @@ private:
     Key key;
     Value value;
 
+    Entry() : key(), value() {} // needed for DynamicArray
     Entry(const Key &k, const Value &v)
         : key(k), value(v) {} // fancy notation i found
   };
@@ -45,7 +46,7 @@ public:
   bool empty() const;  // get is empty
 
   double load_factor() const; // return current load factor
-}
+};
 
 #include "HashTable.tpp" // implementation
 

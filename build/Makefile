@@ -236,6 +236,30 @@ gtest_main/fast:
 	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build
 .PHONY : gtest_main/fast
 
+backend/Backend.o: backend/Backend.cpp.o
+.PHONY : backend/Backend.o
+
+# target to build an object file
+backend/Backend.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/backend/Backend.cpp.o
+.PHONY : backend/Backend.cpp.o
+
+backend/Backend.i: backend/Backend.cpp.i
+.PHONY : backend/Backend.i
+
+# target to preprocess a source file
+backend/Backend.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/backend/Backend.cpp.i
+.PHONY : backend/Backend.cpp.i
+
+backend/Backend.s: backend/Backend.cpp.s
+.PHONY : backend/Backend.s
+
+# target to generate assembly for a file
+backend/Backend.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/backend/Backend.cpp.s
+.PHONY : backend/Backend.cpp.s
+
 backend/Register.o: backend/Register.cpp.o
 .PHONY : backend/Register.o
 
@@ -379,6 +403,30 @@ datastructs/String.s: datastructs/String.cpp.s
 datastructs/String.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/String.cpp.s
 .PHONY : datastructs/String.cpp.s
+
+tests/test_backend.o: tests/test_backend.cpp.o
+.PHONY : tests/test_backend.o
+
+# target to build an object file
+tests/test_backend.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_backend.cpp.o
+.PHONY : tests/test_backend.cpp.o
+
+tests/test_backend.i: tests/test_backend.cpp.i
+.PHONY : tests/test_backend.i
+
+# target to preprocess a source file
+tests/test_backend.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_backend.cpp.i
+.PHONY : tests/test_backend.cpp.i
+
+tests/test_backend.s: tests/test_backend.cpp.s
+.PHONY : tests/test_backend.s
+
+# target to generate assembly for a file
+tests/test_backend.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_backend.cpp.s
+.PHONY : tests/test_backend.cpp.s
 
 tests/test_complex.o: tests/test_complex.cpp.o
 .PHONY : tests/test_complex.o
@@ -590,6 +638,9 @@ help:
 	@echo "... gtest"
 	@echo "... gtest_main"
 	@echo "... run_tests"
+	@echo "... backend/Backend.o"
+	@echo "... backend/Backend.i"
+	@echo "... backend/Backend.s"
 	@echo "... backend/Register.o"
 	@echo "... backend/Register.i"
 	@echo "... backend/Register.s"
@@ -608,6 +659,9 @@ help:
 	@echo "... datastructs/String.o"
 	@echo "... datastructs/String.i"
 	@echo "... datastructs/String.s"
+	@echo "... tests/test_backend.o"
+	@echo "... tests/test_backend.i"
+	@echo "... tests/test_backend.s"
 	@echo "... tests/test_complex.o"
 	@echo "... tests/test_complex.i"
 	@echo "... tests/test_complex.s"

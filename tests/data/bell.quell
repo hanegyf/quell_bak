@@ -1,0 +1,11 @@
+# Header
+QUBITS 2
+BITS 2
+SHOTS 100
+
+# Prepare |00>
+H 0
+CNOT 0 1
+
+MEASURE 0 0
+MEASURE 1 1

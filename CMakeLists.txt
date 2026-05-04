@@ -20,6 +20,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 set(DATASOURCE_FILES # add cpp, .tpp don't need cause in headers
+    backend/Backend.cpp
     datastructs/Complex.cpp
     datastructs/Matrix.cpp
     backend/Register.cpp
@@ -29,6 +30,7 @@ set(DATASOURCE_FILES # add cpp, .tpp don't need cause in headers
 )
 
 set(TEST_FILES # add tests
+    tests/test_backend.cpp
     tests/test_complex.cpp
     tests/test_dynamic_array.cpp
     tests/test_matrix.cpp
@@ -40,6 +42,9 @@ set(TEST_FILES # add tests
 )
 
 add_executable(run_tests ${DATASOURCE_FILES} ${TEST_FILES}) # make an executable named run_tests
+
+target_compile_definitions(run_tests PRIVATE QUELL_TEST_DATA_DIR="${PROJECT_SOURCE_DIR}/tests/data"
+) # make it portable so that quell files can be tested locally
 
 target_link_libraries(run_tests gtest_main) # link GoogleTest function + library
 

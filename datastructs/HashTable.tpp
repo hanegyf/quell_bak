@@ -2,8 +2,7 @@ template <typename Key, typename Value, typename Hash,
           typename KeyEqual> // this was so much fun to type at the beginning
                              // until i remembered that nvim had registers :D
 HashTable<Key, Value, Hash, KeyEqual>::HashTable(
-    size_t initial_bucket_count) // initialize hash
-                                 // table
+    size_t initial_bucket_count) // initialize hash table
     : buckets(), element_count(0),
       max_load_factor(0.75) { // fancy notation online
   for (size_t i = 0; i < initial_bucket_count; i++) {
@@ -14,7 +13,7 @@ HashTable<Key, Value, Hash, KeyEqual>::HashTable(
 
 template <typename Key, typename Value, typename Hash, typename KeyEqual>
 size_t HashTable<Key, Value, Hash, KeyEqual>::bucket_index(
-    const Key &key) { // get the bucket index of a certain key
+    const Key &key) const { // get the bucket index of a certain key
   return hasher(key) % buckets.get_size();
 }
 
@@ -31,7 +30,7 @@ void HashTable<Key, Value, Hash, KeyEqual>::rehash(
   for (size_t i = 0; i < buckets.get_size();
        i++) { // O(n^2) bc separate chaining, so rehash has to readd separate
               // chaining
-    for (size_t j = 0; i < buckets[i].get_size(); j++) {
+    for (size_t j = 0; j < buckets[i].get_size(); j++) {
       Entry &entry = buckets[i][j];
       size_t new_index = hasher(entry.key) % new_bucket_count;
       new_buckets[new_index].push_back(entry);
@@ -89,7 +88,7 @@ Value &HashTable<Key, Value, Hash, KeyEqual>::at(
   size_t index = bucket_index(key);
 
   for (size_t i = 0; i < buckets[index].get_size(); i++) {
-    if (key_equal(buckets[index][i].key, key())) {
+    if (key_equal(buckets[index][i].key, key)) {
       return buckets[index][i].value; // just return the value
     }
   }
@@ -119,7 +118,7 @@ bool HashTable<Key, Value, Hash, KeyEqual>::remove(
   size_t index = bucket_index(key);
 
   for (size_t i = 0; i < buckets[index].get_size(); i++) {
-    if (key_equal(buckets[index][i].key key)) {    // if at key
+    if (key_equal(buckets[index][i].key, key)) {   // if at key
       size_t last = buckets[index].get_size() - 1; // get index of last
       buckets[index][i] =
           buckets[index][last];  // set data here equals data at last

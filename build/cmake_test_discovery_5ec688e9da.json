@@ -1,7 +1,18 @@
 {
-  "tests": 71,
+  "tests": 72,
   "name": "AllTests",
   "testsuites": [
+    {
+      "name": "BackendTest",
+      "tests": 1,
+      "testsuite": [
+        {
+          "name": "BellStateHistogram",
+          "file": "\/home\/squid2010\/Projects\/quell\/tests\/test_backend.cpp",
+          "line": 5
+        }
+      ]
+    },
     {
       "name": "ComplexTest",
       "tests": 10,
