@@ -286,45 +286,53 @@ void Backend::load(const String &filepath) { // load from file path to program
     throw std::runtime_error("BITS must be set"); // missing in header
 }
 
-void Backend::collapse_qubit(Statevector &state, size_t qubit,
+void Backend::collapse_qubit(Statevector &state,
+                             size_t qubit, // collapse a qubit's superposition
                              size_t value) const {
   size_t dim = state.size();
   size_t mask = 1ULL << qubit;
 
   double norm = 0.0;
   for (size_t i = 0; i < dim; ++i) {
-    if (((i & mask) != 0) != (value != 0))
-      state[i] = Complex(0.0, 0.0);
+    if (((i & mask) != 0) !=
+        (value != 0)) // if on the correct qubit and the value to collapse to is
+                      // 0, or not on the correct qubit and the value to be
+                      // collapsed to is not 0
+      state[i] = Complex(0.0, 0.0); // set that state to be 0
     else
-      norm += state[i].norm();
+      norm +=
+          state[i]
+              .norm(); // otherwise, add the norm for overall renormalization
   }
 
-  if (norm <= 0.0)
+  if (norm <= 0.0) // if floating point error or smthg
     throw std::runtime_error("Collapse resulted in zero norm");
 
-  double inv = 1.0 / std::sqrt(norm);
+  double inv = 1.0 / std::sqrt(norm); // renormalize
   for (size_t i = 0; i < dim; ++i) {
     state[i] *= inv;
   }
 }
 
-void Backend::measure_qubit(Statevector &state, size_t qubit, size_t &result,
+void Backend::measure_qubit(Statevector &state, size_t qubit,
+                            size_t &result, // measure a single qubit
                             RNG &rng) const {
   size_t dim = state.size();
   size_t mask = 1ULL << qubit;
   double p0 = 0.0;
 
   for (size_t i = 0; i < dim; ++i) {
-    if ((i & mask) == 0)
-      p0 += state[i].norm();
+    if ((i & mask) == 0)     // if not on correct qubit
+      p0 += state[i].norm(); // add norm to overall probability of getting 0
   }
 
   double r = rng.uniform();
-  result = (r < p0) ? 0 : 1;
-  collapse_qubit(state, qubit, result);
+  result = (r < p0) ? 0 : 1; // if you got less than p0, collapse to 0, else 1
+  collapse_qubit(state, qubit, result); // collapse qubit
 }
 
-size_t Backend::encode_bits(const DynamicArray<size_t> &bits) const {
+size_t Backend::encode_bits(
+    const DynamicArray<size_t> &bits) const { // encode bit into bitstring
   size_t value = 0;
   for (size_t i = 0; i < bits.get_size(); ++i) {
     if (bits[i])
@@ -333,11 +341,11 @@ size_t Backend::encode_bits(const DynamicArray<size_t> &bits) const {
   return value;
 }
 
-void Backend::run(RNG &rng) {
-  histogram = HashTable<size_t, size_t>();
+void Backend::run(RNG &rng) {              // run code
+  histogram = HashTable<size_t, size_t>(); // results
   has_last_state = false;
 
-  for (size_t shot = 0; shot < num_shots; ++shot) {
+  for (size_t shot = 0; shot < num_shots; ++shot) { // for each run through
     Statevector state(num_qubits);
 
     DynamicArray<size_t> classical;
@@ -348,10 +356,10 @@ void Backend::run(RNG &rng) {
     for (size_t i = 0; i < num_qubits; ++i)
       locked.push_back(0);
 
-    for (size_t i = 0; i < program.get_size(); ++i) {
+    for (size_t i = 0; i < program.get_size(); ++i) { // do each instruction
       const Instruction &instr = program[i];
 
-      if (instr.op == OpCode::Init) {
+      if (instr.op == OpCode::Init) { // error handling stuff
         if (instr.target >= num_qubits)
           throw std::runtime_error("INIT qubit out of range");
         collapse_qubit(state, instr.target, 0);
@@ -383,15 +391,16 @@ void Backend::run(RNG &rng) {
           throw std::runtime_error(
               "Gate control is a measured qubit without INIT");
 
-        Matrix gate = resolve_gate(instr.gate, instr.parameter);
+        Matrix gate = resolve_gate(instr.gate,
+                                   instr.parameter); // resolve the instruction
         if (instr.control)
-          state.apply_gate(gate, instr.target, instr.control);
+          state.apply_gate(gate, instr.target, instr.control); // apply the gate
         else
           state.apply_gate(gate, instr.target, std::nullopt);
       }
     }
 
-    size_t outcome = encode_bits(classical);
+    size_t outcome = encode_bits(classical); // add outcome to histogram
     if (histogram.contains(outcome))
       histogram.at(outcome) += 1;
     else
@@ -402,13 +411,14 @@ void Backend::run(RNG &rng) {
   }
 }
 
-const Statevector &Backend::get_statevector() const {
+const Statevector &Backend::get_statevector() const { // resulting statevector
   if (!has_last_state)
     throw std::runtime_error("Statevector not available (run not called)");
   return last_state;
 }
 
-const HashTable<size_t, size_t> &Backend::get_histogram() const {
+const HashTable<size_t, size_t> &
+Backend::get_histogram() const { // resulting histogram
   return histogram;
 }
 
