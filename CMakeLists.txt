@@ -21,6 +21,11 @@ enable_testing()
 
 set(DATASOURCE_FILES # add cpp, .tpp don't need cause in headers
     backend/Backend.cpp
+    compiler/Compiler.cpp
+    compiler/Lexer.cpp
+    compiler/Parser.cpp
+    compiler/Lower.cpp
+    compiler/QEmitter.cpp
     datastructs/Complex.cpp
     datastructs/Matrix.cpp
     backend/Register.cpp
@@ -31,6 +36,7 @@ set(DATASOURCE_FILES # add cpp, .tpp don't need cause in headers
 
 set(TEST_FILES # add tests
     tests/test_backend.cpp
+    tests/test_compiler.cpp
     tests/test_complex.cpp
     tests/test_dynamic_array.cpp
     tests/test_matrix.cpp

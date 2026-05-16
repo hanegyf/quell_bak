@@ -114,7 +114,7 @@ LexResult Lexer::lex() { // lex through the entire file
 
         // special cases
         if (is_ident_start(c)) { out.tokens.push_back(lex_identifier_or_keyword()); continue; } // if an identifier/keyword
-        if (std::isdigit(static_cast<unsigned char(c))) { out.tokens.push_back(lex_number()); continue; } // if a number
+        if (std::isdigit(static_cast<unsigned char>(c))) { out.tokens.push_back(lex_number()); continue; } // if a number
         
         if (c == '-' && peek(1) == '>') { get(); get(); out.tokens.push_back(make(TokenKind::Arrow,  begin, pos, "->")); continue; } // if an arrow sign
 

@@ -32,7 +32,7 @@ enum class TokenKind {
 
     // other stuff
     Arrow, // ->
-    Lt, Rt, // < >
+    Lt, Gt, // < >
 };
 
 struct Span { // tells length of a token

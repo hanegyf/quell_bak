@@ -7,6 +7,36 @@
 },
 {
   "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++ -DQUELL_TEST_DATA_DIR=\\\"/home/squid2010/Projects/quell/tests/data\\\" -I/home/squid2010/Projects/quell/datastructs -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest/include -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest -std=c++17 -o CMakeFiles/run_tests.dir/compiler/Compiler.cpp.o -c /home/squid2010/Projects/quell/compiler/Compiler.cpp",
+  "file": "/home/squid2010/Projects/quell/compiler/Compiler.cpp",
+  "output": "CMakeFiles/run_tests.dir/compiler/Compiler.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++ -DQUELL_TEST_DATA_DIR=\\\"/home/squid2010/Projects/quell/tests/data\\\" -I/home/squid2010/Projects/quell/datastructs -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest/include -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest -std=c++17 -o CMakeFiles/run_tests.dir/compiler/Lexer.cpp.o -c /home/squid2010/Projects/quell/compiler/Lexer.cpp",
+  "file": "/home/squid2010/Projects/quell/compiler/Lexer.cpp",
+  "output": "CMakeFiles/run_tests.dir/compiler/Lexer.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++ -DQUELL_TEST_DATA_DIR=\\\"/home/squid2010/Projects/quell/tests/data\\\" -I/home/squid2010/Projects/quell/datastructs -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest/include -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest -std=c++17 -o CMakeFiles/run_tests.dir/compiler/Parser.cpp.o -c /home/squid2010/Projects/quell/compiler/Parser.cpp",
+  "file": "/home/squid2010/Projects/quell/compiler/Parser.cpp",
+  "output": "CMakeFiles/run_tests.dir/compiler/Parser.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++ -DQUELL_TEST_DATA_DIR=\\\"/home/squid2010/Projects/quell/tests/data\\\" -I/home/squid2010/Projects/quell/datastructs -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest/include -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest -std=c++17 -o CMakeFiles/run_tests.dir/compiler/Lower.cpp.o -c /home/squid2010/Projects/quell/compiler/Lower.cpp",
+  "file": "/home/squid2010/Projects/quell/compiler/Lower.cpp",
+  "output": "CMakeFiles/run_tests.dir/compiler/Lower.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++ -DQUELL_TEST_DATA_DIR=\\\"/home/squid2010/Projects/quell/tests/data\\\" -I/home/squid2010/Projects/quell/datastructs -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest/include -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest -std=c++17 -o CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.o -c /home/squid2010/Projects/quell/compiler/QEmitter.cpp",
+  "file": "/home/squid2010/Projects/quell/compiler/QEmitter.cpp",
+  "output": "CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
   "command": "/usr/bin/c++ -DQUELL_TEST_DATA_DIR=\\\"/home/squid2010/Projects/quell/tests/data\\\" -I/home/squid2010/Projects/quell/datastructs -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest/include -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest -std=c++17 -o CMakeFiles/run_tests.dir/datastructs/Complex.cpp.o -c /home/squid2010/Projects/quell/datastructs/Complex.cpp",
   "file": "/home/squid2010/Projects/quell/datastructs/Complex.cpp",
   "output": "CMakeFiles/run_tests.dir/datastructs/Complex.cpp.o"
@@ -46,6 +76,12 @@
   "command": "/usr/bin/c++ -DQUELL_TEST_DATA_DIR=\\\"/home/squid2010/Projects/quell/tests/data\\\" -I/home/squid2010/Projects/quell/datastructs -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest/include -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest -std=c++17 -o CMakeFiles/run_tests.dir/tests/test_backend.cpp.o -c /home/squid2010/Projects/quell/tests/test_backend.cpp",
   "file": "/home/squid2010/Projects/quell/tests/test_backend.cpp",
   "output": "CMakeFiles/run_tests.dir/tests/test_backend.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++ -DQUELL_TEST_DATA_DIR=\\\"/home/squid2010/Projects/quell/tests/data\\\" -I/home/squid2010/Projects/quell/datastructs -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest/include -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest -std=c++17 -o CMakeFiles/run_tests.dir/tests/test_compiler.cpp.o -c /home/squid2010/Projects/quell/tests/test_compiler.cpp",
+  "file": "/home/squid2010/Projects/quell/tests/test_compiler.cpp",
+  "output": "CMakeFiles/run_tests.dir/tests/test_compiler.cpp.o"
 },
 {
   "directory": "/home/squid2010/Projects/quell/build",

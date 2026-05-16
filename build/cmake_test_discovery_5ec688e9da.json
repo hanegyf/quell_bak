@@ -1,5 +1,5 @@
 {
-  "tests": 72,
+  "tests": 74,
   "name": "AllTests",
   "testsuites": [
     {
@@ -10,6 +10,22 @@
           "name": "BellStateHistogram",
           "file": "\/home\/squid2010\/Projects\/quell\/tests\/test_backend.cpp",
           "line": 5
+        }
+      ]
+    },
+    {
+      "name": "CompilerTest",
+      "tests": 2,
+      "testsuite": [
+        {
+          "name": "EmitsBellQCorrectly",
+          "file": "\/home\/squid2010\/Projects\/quell\/tests\/test_compiler.cpp",
+          "line": 22
+        },
+        {
+          "name": "LowersSwapAndReset",
+          "file": "\/home\/squid2010\/Projects\/quell\/tests\/test_compiler.cpp",
+          "line": 42
         }
       ]
     },

@@ -284,6 +284,126 @@ backend/Register.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/backend/Register.cpp.s
 .PHONY : backend/Register.cpp.s
 
+compiler/Compiler.o: compiler/Compiler.cpp.o
+.PHONY : compiler/Compiler.o
+
+# target to build an object file
+compiler/Compiler.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Compiler.cpp.o
+.PHONY : compiler/Compiler.cpp.o
+
+compiler/Compiler.i: compiler/Compiler.cpp.i
+.PHONY : compiler/Compiler.i
+
+# target to preprocess a source file
+compiler/Compiler.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Compiler.cpp.i
+.PHONY : compiler/Compiler.cpp.i
+
+compiler/Compiler.s: compiler/Compiler.cpp.s
+.PHONY : compiler/Compiler.s
+
+# target to generate assembly for a file
+compiler/Compiler.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Compiler.cpp.s
+.PHONY : compiler/Compiler.cpp.s
+
+compiler/Lexer.o: compiler/Lexer.cpp.o
+.PHONY : compiler/Lexer.o
+
+# target to build an object file
+compiler/Lexer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lexer.cpp.o
+.PHONY : compiler/Lexer.cpp.o
+
+compiler/Lexer.i: compiler/Lexer.cpp.i
+.PHONY : compiler/Lexer.i
+
+# target to preprocess a source file
+compiler/Lexer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lexer.cpp.i
+.PHONY : compiler/Lexer.cpp.i
+
+compiler/Lexer.s: compiler/Lexer.cpp.s
+.PHONY : compiler/Lexer.s
+
+# target to generate assembly for a file
+compiler/Lexer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lexer.cpp.s
+.PHONY : compiler/Lexer.cpp.s
+
+compiler/Lower.o: compiler/Lower.cpp.o
+.PHONY : compiler/Lower.o
+
+# target to build an object file
+compiler/Lower.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lower.cpp.o
+.PHONY : compiler/Lower.cpp.o
+
+compiler/Lower.i: compiler/Lower.cpp.i
+.PHONY : compiler/Lower.i
+
+# target to preprocess a source file
+compiler/Lower.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lower.cpp.i
+.PHONY : compiler/Lower.cpp.i
+
+compiler/Lower.s: compiler/Lower.cpp.s
+.PHONY : compiler/Lower.s
+
+# target to generate assembly for a file
+compiler/Lower.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lower.cpp.s
+.PHONY : compiler/Lower.cpp.s
+
+compiler/Parser.o: compiler/Parser.cpp.o
+.PHONY : compiler/Parser.o
+
+# target to build an object file
+compiler/Parser.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Parser.cpp.o
+.PHONY : compiler/Parser.cpp.o
+
+compiler/Parser.i: compiler/Parser.cpp.i
+.PHONY : compiler/Parser.i
+
+# target to preprocess a source file
+compiler/Parser.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Parser.cpp.i
+.PHONY : compiler/Parser.cpp.i
+
+compiler/Parser.s: compiler/Parser.cpp.s
+.PHONY : compiler/Parser.s
+
+# target to generate assembly for a file
+compiler/Parser.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Parser.cpp.s
+.PHONY : compiler/Parser.cpp.s
+
+compiler/QEmitter.o: compiler/QEmitter.cpp.o
+.PHONY : compiler/QEmitter.o
+
+# target to build an object file
+compiler/QEmitter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.o
+.PHONY : compiler/QEmitter.cpp.o
+
+compiler/QEmitter.i: compiler/QEmitter.cpp.i
+.PHONY : compiler/QEmitter.i
+
+# target to preprocess a source file
+compiler/QEmitter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.i
+.PHONY : compiler/QEmitter.cpp.i
+
+compiler/QEmitter.s: compiler/QEmitter.cpp.s
+.PHONY : compiler/QEmitter.s
+
+# target to generate assembly for a file
+compiler/QEmitter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.s
+.PHONY : compiler/QEmitter.cpp.s
+
 datastructs/Complex.o: datastructs/Complex.cpp.o
 .PHONY : datastructs/Complex.o
 
@@ -427,6 +547,30 @@ tests/test_backend.s: tests/test_backend.cpp.s
 tests/test_backend.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_backend.cpp.s
 .PHONY : tests/test_backend.cpp.s
+
+tests/test_compiler.o: tests/test_compiler.cpp.o
+.PHONY : tests/test_compiler.o
+
+# target to build an object file
+tests/test_compiler.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_compiler.cpp.o
+.PHONY : tests/test_compiler.cpp.o
+
+tests/test_compiler.i: tests/test_compiler.cpp.i
+.PHONY : tests/test_compiler.i
+
+# target to preprocess a source file
+tests/test_compiler.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_compiler.cpp.i
+.PHONY : tests/test_compiler.cpp.i
+
+tests/test_compiler.s: tests/test_compiler.cpp.s
+.PHONY : tests/test_compiler.s
+
+# target to generate assembly for a file
+tests/test_compiler.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_compiler.cpp.s
+.PHONY : tests/test_compiler.cpp.s
 
 tests/test_complex.o: tests/test_complex.cpp.o
 .PHONY : tests/test_complex.o
@@ -644,6 +788,21 @@ help:
 	@echo "... backend/Register.o"
 	@echo "... backend/Register.i"
 	@echo "... backend/Register.s"
+	@echo "... compiler/Compiler.o"
+	@echo "... compiler/Compiler.i"
+	@echo "... compiler/Compiler.s"
+	@echo "... compiler/Lexer.o"
+	@echo "... compiler/Lexer.i"
+	@echo "... compiler/Lexer.s"
+	@echo "... compiler/Lower.o"
+	@echo "... compiler/Lower.i"
+	@echo "... compiler/Lower.s"
+	@echo "... compiler/Parser.o"
+	@echo "... compiler/Parser.i"
+	@echo "... compiler/Parser.s"
+	@echo "... compiler/QEmitter.o"
+	@echo "... compiler/QEmitter.i"
+	@echo "... compiler/QEmitter.s"
 	@echo "... datastructs/Complex.o"
 	@echo "... datastructs/Complex.i"
 	@echo "... datastructs/Complex.s"
@@ -662,6 +821,9 @@ help:
 	@echo "... tests/test_backend.o"
 	@echo "... tests/test_backend.i"
 	@echo "... tests/test_backend.s"
+	@echo "... tests/test_compiler.o"
+	@echo "... tests/test_compiler.i"
+	@echo "... tests/test_compiler.s"
 	@echo "... tests/test_complex.o"
 	@echo "... tests/test_complex.i"
 	@echo "... tests/test_complex.s"
