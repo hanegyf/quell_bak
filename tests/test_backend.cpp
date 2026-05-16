@@ -4,7 +4,7 @@
 
 TEST(BackendTest, BellStateHistogram) {
   Backend backend;
-  backend.load(String(QUELL_TEST_DATA_DIR "/bell.quell"));
+  backend.load(String(QUELL_TEST_DATA_DIR "/bell.q"));
 
   RNG rng(1234);
   backend.run(rng);
