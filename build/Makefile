@@ -185,6 +185,19 @@ run_tests/fast:
 .PHONY : run_tests/fast
 
 #=============================================================================
+# Target rules for targets named quell
+
+# Build rule for target.
+quell: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 quell
+.PHONY : quell
+
+# fast build rule for target.
+quell/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/build
+.PHONY : quell/fast
+
+#=============================================================================
 # Target rules for targets named gmock
 
 # Build rule for target.
@@ -242,6 +255,7 @@ backend/Backend.o: backend/Backend.cpp.o
 # target to build an object file
 backend/Backend.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/backend/Backend.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/backend/Backend.cpp.o
 .PHONY : backend/Backend.cpp.o
 
 backend/Backend.i: backend/Backend.cpp.i
@@ -250,6 +264,7 @@ backend/Backend.i: backend/Backend.cpp.i
 # target to preprocess a source file
 backend/Backend.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/backend/Backend.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/backend/Backend.cpp.i
 .PHONY : backend/Backend.cpp.i
 
 backend/Backend.s: backend/Backend.cpp.s
@@ -258,6 +273,7 @@ backend/Backend.s: backend/Backend.cpp.s
 # target to generate assembly for a file
 backend/Backend.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/backend/Backend.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/backend/Backend.cpp.s
 .PHONY : backend/Backend.cpp.s
 
 backend/Register.o: backend/Register.cpp.o
@@ -266,6 +282,7 @@ backend/Register.o: backend/Register.cpp.o
 # target to build an object file
 backend/Register.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/backend/Register.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/backend/Register.cpp.o
 .PHONY : backend/Register.cpp.o
 
 backend/Register.i: backend/Register.cpp.i
@@ -274,6 +291,7 @@ backend/Register.i: backend/Register.cpp.i
 # target to preprocess a source file
 backend/Register.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/backend/Register.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/backend/Register.cpp.i
 .PHONY : backend/Register.cpp.i
 
 backend/Register.s: backend/Register.cpp.s
@@ -282,6 +300,7 @@ backend/Register.s: backend/Register.cpp.s
 # target to generate assembly for a file
 backend/Register.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/backend/Register.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/backend/Register.cpp.s
 .PHONY : backend/Register.cpp.s
 
 compiler/Compiler.o: compiler/Compiler.cpp.o
@@ -290,6 +309,7 @@ compiler/Compiler.o: compiler/Compiler.cpp.o
 # target to build an object file
 compiler/Compiler.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Compiler.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Compiler.cpp.o
 .PHONY : compiler/Compiler.cpp.o
 
 compiler/Compiler.i: compiler/Compiler.cpp.i
@@ -298,6 +318,7 @@ compiler/Compiler.i: compiler/Compiler.cpp.i
 # target to preprocess a source file
 compiler/Compiler.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Compiler.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Compiler.cpp.i
 .PHONY : compiler/Compiler.cpp.i
 
 compiler/Compiler.s: compiler/Compiler.cpp.s
@@ -306,6 +327,7 @@ compiler/Compiler.s: compiler/Compiler.cpp.s
 # target to generate assembly for a file
 compiler/Compiler.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Compiler.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Compiler.cpp.s
 .PHONY : compiler/Compiler.cpp.s
 
 compiler/Lexer.o: compiler/Lexer.cpp.o
@@ -314,6 +336,7 @@ compiler/Lexer.o: compiler/Lexer.cpp.o
 # target to build an object file
 compiler/Lexer.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lexer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Lexer.cpp.o
 .PHONY : compiler/Lexer.cpp.o
 
 compiler/Lexer.i: compiler/Lexer.cpp.i
@@ -322,6 +345,7 @@ compiler/Lexer.i: compiler/Lexer.cpp.i
 # target to preprocess a source file
 compiler/Lexer.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lexer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Lexer.cpp.i
 .PHONY : compiler/Lexer.cpp.i
 
 compiler/Lexer.s: compiler/Lexer.cpp.s
@@ -330,6 +354,7 @@ compiler/Lexer.s: compiler/Lexer.cpp.s
 # target to generate assembly for a file
 compiler/Lexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lexer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Lexer.cpp.s
 .PHONY : compiler/Lexer.cpp.s
 
 compiler/Lower.o: compiler/Lower.cpp.o
@@ -338,6 +363,7 @@ compiler/Lower.o: compiler/Lower.cpp.o
 # target to build an object file
 compiler/Lower.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lower.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Lower.cpp.o
 .PHONY : compiler/Lower.cpp.o
 
 compiler/Lower.i: compiler/Lower.cpp.i
@@ -346,6 +372,7 @@ compiler/Lower.i: compiler/Lower.cpp.i
 # target to preprocess a source file
 compiler/Lower.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lower.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Lower.cpp.i
 .PHONY : compiler/Lower.cpp.i
 
 compiler/Lower.s: compiler/Lower.cpp.s
@@ -354,6 +381,7 @@ compiler/Lower.s: compiler/Lower.cpp.s
 # target to generate assembly for a file
 compiler/Lower.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Lower.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Lower.cpp.s
 .PHONY : compiler/Lower.cpp.s
 
 compiler/Parser.o: compiler/Parser.cpp.o
@@ -362,6 +390,7 @@ compiler/Parser.o: compiler/Parser.cpp.o
 # target to build an object file
 compiler/Parser.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Parser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Parser.cpp.o
 .PHONY : compiler/Parser.cpp.o
 
 compiler/Parser.i: compiler/Parser.cpp.i
@@ -370,6 +399,7 @@ compiler/Parser.i: compiler/Parser.cpp.i
 # target to preprocess a source file
 compiler/Parser.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Parser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Parser.cpp.i
 .PHONY : compiler/Parser.cpp.i
 
 compiler/Parser.s: compiler/Parser.cpp.s
@@ -378,6 +408,7 @@ compiler/Parser.s: compiler/Parser.cpp.s
 # target to generate assembly for a file
 compiler/Parser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/Parser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/Parser.cpp.s
 .PHONY : compiler/Parser.cpp.s
 
 compiler/QEmitter.o: compiler/QEmitter.cpp.o
@@ -386,6 +417,7 @@ compiler/QEmitter.o: compiler/QEmitter.cpp.o
 # target to build an object file
 compiler/QEmitter.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/QEmitter.cpp.o
 .PHONY : compiler/QEmitter.cpp.o
 
 compiler/QEmitter.i: compiler/QEmitter.cpp.i
@@ -394,6 +426,7 @@ compiler/QEmitter.i: compiler/QEmitter.cpp.i
 # target to preprocess a source file
 compiler/QEmitter.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/QEmitter.cpp.i
 .PHONY : compiler/QEmitter.cpp.i
 
 compiler/QEmitter.s: compiler/QEmitter.cpp.s
@@ -402,6 +435,7 @@ compiler/QEmitter.s: compiler/QEmitter.cpp.s
 # target to generate assembly for a file
 compiler/QEmitter.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/compiler/QEmitter.cpp.s
 .PHONY : compiler/QEmitter.cpp.s
 
 datastructs/Complex.o: datastructs/Complex.cpp.o
@@ -410,6 +444,7 @@ datastructs/Complex.o: datastructs/Complex.cpp.o
 # target to build an object file
 datastructs/Complex.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/Complex.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/Complex.cpp.o
 .PHONY : datastructs/Complex.cpp.o
 
 datastructs/Complex.i: datastructs/Complex.cpp.i
@@ -418,6 +453,7 @@ datastructs/Complex.i: datastructs/Complex.cpp.i
 # target to preprocess a source file
 datastructs/Complex.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/Complex.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/Complex.cpp.i
 .PHONY : datastructs/Complex.cpp.i
 
 datastructs/Complex.s: datastructs/Complex.cpp.s
@@ -426,6 +462,7 @@ datastructs/Complex.s: datastructs/Complex.cpp.s
 # target to generate assembly for a file
 datastructs/Complex.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/Complex.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/Complex.cpp.s
 .PHONY : datastructs/Complex.cpp.s
 
 datastructs/Matrix.o: datastructs/Matrix.cpp.o
@@ -434,6 +471,7 @@ datastructs/Matrix.o: datastructs/Matrix.cpp.o
 # target to build an object file
 datastructs/Matrix.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/Matrix.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/Matrix.cpp.o
 .PHONY : datastructs/Matrix.cpp.o
 
 datastructs/Matrix.i: datastructs/Matrix.cpp.i
@@ -442,6 +480,7 @@ datastructs/Matrix.i: datastructs/Matrix.cpp.i
 # target to preprocess a source file
 datastructs/Matrix.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/Matrix.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/Matrix.cpp.i
 .PHONY : datastructs/Matrix.cpp.i
 
 datastructs/Matrix.s: datastructs/Matrix.cpp.s
@@ -450,6 +489,7 @@ datastructs/Matrix.s: datastructs/Matrix.cpp.s
 # target to generate assembly for a file
 datastructs/Matrix.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/Matrix.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/Matrix.cpp.s
 .PHONY : datastructs/Matrix.cpp.s
 
 datastructs/RNG.o: datastructs/RNG.cpp.o
@@ -458,6 +498,7 @@ datastructs/RNG.o: datastructs/RNG.cpp.o
 # target to build an object file
 datastructs/RNG.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/RNG.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/RNG.cpp.o
 .PHONY : datastructs/RNG.cpp.o
 
 datastructs/RNG.i: datastructs/RNG.cpp.i
@@ -466,6 +507,7 @@ datastructs/RNG.i: datastructs/RNG.cpp.i
 # target to preprocess a source file
 datastructs/RNG.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/RNG.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/RNG.cpp.i
 .PHONY : datastructs/RNG.cpp.i
 
 datastructs/RNG.s: datastructs/RNG.cpp.s
@@ -474,6 +516,7 @@ datastructs/RNG.s: datastructs/RNG.cpp.s
 # target to generate assembly for a file
 datastructs/RNG.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/RNG.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/RNG.cpp.s
 .PHONY : datastructs/RNG.cpp.s
 
 datastructs/StateVector.o: datastructs/StateVector.cpp.o
@@ -482,6 +525,7 @@ datastructs/StateVector.o: datastructs/StateVector.cpp.o
 # target to build an object file
 datastructs/StateVector.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/StateVector.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/StateVector.cpp.o
 .PHONY : datastructs/StateVector.cpp.o
 
 datastructs/StateVector.i: datastructs/StateVector.cpp.i
@@ -490,6 +534,7 @@ datastructs/StateVector.i: datastructs/StateVector.cpp.i
 # target to preprocess a source file
 datastructs/StateVector.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/StateVector.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/StateVector.cpp.i
 .PHONY : datastructs/StateVector.cpp.i
 
 datastructs/StateVector.s: datastructs/StateVector.cpp.s
@@ -498,6 +543,7 @@ datastructs/StateVector.s: datastructs/StateVector.cpp.s
 # target to generate assembly for a file
 datastructs/StateVector.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/StateVector.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/StateVector.cpp.s
 .PHONY : datastructs/StateVector.cpp.s
 
 datastructs/String.o: datastructs/String.cpp.o
@@ -506,6 +552,7 @@ datastructs/String.o: datastructs/String.cpp.o
 # target to build an object file
 datastructs/String.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/String.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/String.cpp.o
 .PHONY : datastructs/String.cpp.o
 
 datastructs/String.i: datastructs/String.cpp.i
@@ -514,6 +561,7 @@ datastructs/String.i: datastructs/String.cpp.i
 # target to preprocess a source file
 datastructs/String.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/String.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/String.cpp.i
 .PHONY : datastructs/String.cpp.i
 
 datastructs/String.s: datastructs/String.cpp.s
@@ -522,6 +570,7 @@ datastructs/String.s: datastructs/String.cpp.s
 # target to generate assembly for a file
 datastructs/String.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/datastructs/String.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/datastructs/String.cpp.s
 .PHONY : datastructs/String.cpp.s
 
 tests/test_backend.o: tests/test_backend.cpp.o
@@ -764,6 +813,30 @@ tests/test_string.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_string.cpp.s
 .PHONY : tests/test_string.cpp.s
 
+tools/quell_cli.o: tools/quell_cli.cpp.o
+.PHONY : tools/quell_cli.o
+
+# target to build an object file
+tools/quell_cli.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/tools/quell_cli.cpp.o
+.PHONY : tools/quell_cli.cpp.o
+
+tools/quell_cli.i: tools/quell_cli.cpp.i
+.PHONY : tools/quell_cli.i
+
+# target to preprocess a source file
+tools/quell_cli.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/tools/quell_cli.cpp.i
+.PHONY : tools/quell_cli.cpp.i
+
+tools/quell_cli.s: tools/quell_cli.cpp.s
+.PHONY : tools/quell_cli.s
+
+# target to generate assembly for a file
+tools/quell_cli.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/tools/quell_cli.cpp.s
+.PHONY : tools/quell_cli.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -781,6 +854,7 @@ help:
 	@echo "... gmock_main"
 	@echo "... gtest"
 	@echo "... gtest_main"
+	@echo "... quell"
 	@echo "... run_tests"
 	@echo "... backend/Backend.o"
 	@echo "... backend/Backend.i"
@@ -848,6 +922,9 @@ help:
 	@echo "... tests/test_string.o"
 	@echo "... tests/test_string.i"
 	@echo "... tests/test_string.s"
+	@echo "... tools/quell_cli.o"
+	@echo "... tools/quell_cli.i"
+	@echo "... tools/quell_cli.s"
 .PHONY : help
 
 

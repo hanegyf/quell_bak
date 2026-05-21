@@ -56,3 +56,9 @@ target_link_libraries(run_tests gtest_main) # link GoogleTest function + library
 
 include(GoogleTest) # discover TEST() cases automatically
 gtest_discover_tests(run_tests)
+
+# quell cli stuff
+add_executable(quell
+    ${DATASOURCE_FILES}
+    tools/quell_cli.cpp
+)

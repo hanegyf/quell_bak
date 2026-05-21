@@ -64,11 +64,13 @@ CMAKE_BINARY_DIR = /home/squid2010/Projects/quell/build
 
 # The main recursive "all" target.
 all: CMakeFiles/run_tests.dir/all
+all: CMakeFiles/quell.dir/all
 all: _deps/googletest-build/all
 .PHONY : all
 
 # The main recursive "codegen" target.
 codegen: CMakeFiles/run_tests.dir/codegen
+codegen: CMakeFiles/quell.dir/codegen
 codegen: _deps/googletest-build/codegen
 .PHONY : codegen
 
@@ -78,6 +80,7 @@ preinstall: _deps/googletest-build/preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/run_tests.dir/clean
+clean: CMakeFiles/quell.dir/clean
 clean: _deps/googletest-build/clean
 .PHONY : clean
 
@@ -155,7 +158,7 @@ CMakeFiles/run_tests.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtest
 CMakeFiles/run_tests.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/squid2010/Projects/quell/build/CMakeFiles --progress-num=9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 "Built target run_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/squid2010/Projects/quell/build/CMakeFiles --progress-num=23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45 "Built target run_tests"
 .PHONY : CMakeFiles/run_tests.dir/all
 
 # Build rule for subdir invocation for target.
@@ -172,13 +175,45 @@ run_tests: CMakeFiles/run_tests.dir/rule
 # codegen rule for target.
 CMakeFiles/run_tests.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/squid2010/Projects/quell/build/CMakeFiles --progress-num=9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 "Finished codegen for target run_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/squid2010/Projects/quell/build/CMakeFiles --progress-num=23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45 "Finished codegen for target run_tests"
 .PHONY : CMakeFiles/run_tests.dir/codegen
 
 # clean rule for target.
 CMakeFiles/run_tests.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/clean
 .PHONY : CMakeFiles/run_tests.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/quell.dir
+
+# All Build rule for target.
+CMakeFiles/quell.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/squid2010/Projects/quell/build/CMakeFiles --progress-num=9,10,11,12,13,14,15,16,17,18,19,20,21,22 "Built target quell"
+.PHONY : CMakeFiles/quell.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/quell.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/squid2010/Projects/quell/build/CMakeFiles 14
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/quell.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/squid2010/Projects/quell/build/CMakeFiles 0
+.PHONY : CMakeFiles/quell.dir/rule
+
+# Convenience name for target.
+quell: CMakeFiles/quell.dir/rule
+.PHONY : quell
+
+# codegen rule for target.
+CMakeFiles/quell.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/squid2010/Projects/quell/build/CMakeFiles --progress-num=9,10,11,12,13,14,15,16,17,18,19,20,21,22 "Finished codegen for target quell"
+.PHONY : CMakeFiles/quell.dir/codegen
+
+# clean rule for target.
+CMakeFiles/quell.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quell.dir/build.make CMakeFiles/quell.dir/clean
+.PHONY : CMakeFiles/quell.dir/clean
 
 #=============================================================================
 # Target rules for target _deps/googletest-build/googlemock/CMakeFiles/gmock.dir

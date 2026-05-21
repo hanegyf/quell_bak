@@ -31,6 +31,7 @@ private:
   void measure_qubit(Statevector &state, size_t qubit, size_t &result,
                      RNG &rng) const;
   void collapse_qubit(Statevector &state, size_t qubit, size_t value) const;
+  void reset_qubit(Statevector &state, size_t qubit) const;
   size_t encode_bits(const DynamicArray<size_t> &bits) const;
 
 public:

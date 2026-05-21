@@ -152,3 +152,14 @@ HashTable<Key, Value, Hash, KeyEqual>::load_factor() const { // get load factor
       buckets
           .get_size()); // number of elements per bucket, should not exceed 0.75
 }
+
+template <typename Key, typename Value, typename Hash, typename KeyEqual>
+template <typename Fn>
+void HashTable<Key, Value, Hash, KeyEqual>::for_each(Fn fn) const {
+    for (size_t i = 0; i < buckets.get_size(); ++i) {
+        const DynamicArray<Entry>& bucket = buckets[i];
+        for (size_t j = 0; j < bucket.get_size(); ++j) {
+            fn(bucket[j].key, bucket[j].value);
+        }
+    }
+}

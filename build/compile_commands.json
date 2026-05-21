@@ -132,6 +132,84 @@
   "output": "CMakeFiles/run_tests.dir/tests/test_string.cpp.o"
 },
 {
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/backend/Backend.cpp.o -c /home/squid2010/Projects/quell/backend/Backend.cpp",
+  "file": "/home/squid2010/Projects/quell/backend/Backend.cpp",
+  "output": "CMakeFiles/quell.dir/backend/Backend.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/compiler/Compiler.cpp.o -c /home/squid2010/Projects/quell/compiler/Compiler.cpp",
+  "file": "/home/squid2010/Projects/quell/compiler/Compiler.cpp",
+  "output": "CMakeFiles/quell.dir/compiler/Compiler.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/compiler/Lexer.cpp.o -c /home/squid2010/Projects/quell/compiler/Lexer.cpp",
+  "file": "/home/squid2010/Projects/quell/compiler/Lexer.cpp",
+  "output": "CMakeFiles/quell.dir/compiler/Lexer.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/compiler/Parser.cpp.o -c /home/squid2010/Projects/quell/compiler/Parser.cpp",
+  "file": "/home/squid2010/Projects/quell/compiler/Parser.cpp",
+  "output": "CMakeFiles/quell.dir/compiler/Parser.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/compiler/Lower.cpp.o -c /home/squid2010/Projects/quell/compiler/Lower.cpp",
+  "file": "/home/squid2010/Projects/quell/compiler/Lower.cpp",
+  "output": "CMakeFiles/quell.dir/compiler/Lower.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/compiler/QEmitter.cpp.o -c /home/squid2010/Projects/quell/compiler/QEmitter.cpp",
+  "file": "/home/squid2010/Projects/quell/compiler/QEmitter.cpp",
+  "output": "CMakeFiles/quell.dir/compiler/QEmitter.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/datastructs/Complex.cpp.o -c /home/squid2010/Projects/quell/datastructs/Complex.cpp",
+  "file": "/home/squid2010/Projects/quell/datastructs/Complex.cpp",
+  "output": "CMakeFiles/quell.dir/datastructs/Complex.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/datastructs/Matrix.cpp.o -c /home/squid2010/Projects/quell/datastructs/Matrix.cpp",
+  "file": "/home/squid2010/Projects/quell/datastructs/Matrix.cpp",
+  "output": "CMakeFiles/quell.dir/datastructs/Matrix.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/backend/Register.cpp.o -c /home/squid2010/Projects/quell/backend/Register.cpp",
+  "file": "/home/squid2010/Projects/quell/backend/Register.cpp",
+  "output": "CMakeFiles/quell.dir/backend/Register.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/datastructs/RNG.cpp.o -c /home/squid2010/Projects/quell/datastructs/RNG.cpp",
+  "file": "/home/squid2010/Projects/quell/datastructs/RNG.cpp",
+  "output": "CMakeFiles/quell.dir/datastructs/RNG.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/datastructs/StateVector.cpp.o -c /home/squid2010/Projects/quell/datastructs/StateVector.cpp",
+  "file": "/home/squid2010/Projects/quell/datastructs/StateVector.cpp",
+  "output": "CMakeFiles/quell.dir/datastructs/StateVector.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/datastructs/String.cpp.o -c /home/squid2010/Projects/quell/datastructs/String.cpp",
+  "file": "/home/squid2010/Projects/quell/datastructs/String.cpp",
+  "output": "CMakeFiles/quell.dir/datastructs/String.cpp.o"
+},
+{
+  "directory": "/home/squid2010/Projects/quell/build",
+  "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -std=c++17 -o CMakeFiles/quell.dir/tools/quell_cli.cpp.o -c /home/squid2010/Projects/quell/tools/quell_cli.cpp",
+  "file": "/home/squid2010/Projects/quell/tools/quell_cli.cpp",
+  "output": "CMakeFiles/quell.dir/tools/quell_cli.cpp.o"
+},
+{
   "directory": "/home/squid2010/Projects/quell/build/_deps/googletest-build/googlemock",
   "command": "/usr/bin/c++  -I/home/squid2010/Projects/quell/datastructs -I/home/squid2010/Projects/quell/build/_deps/googletest-src/googlemock/include -I/home/squid2010/Projects/quell/build/_deps/googletest-src/googlemock -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest/include -isystem /home/squid2010/Projects/quell/build/_deps/googletest-src/googletest -std=c++17 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gmock.dir/src/gmock-all.cc.o -c /home/squid2010/Projects/quell/build/_deps/googletest-src/googlemock/src/gmock-all.cc",
   "file": "/home/squid2010/Projects/quell/build/_deps/googletest-src/googlemock/src/gmock-all.cc",

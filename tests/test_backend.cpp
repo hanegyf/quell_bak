@@ -1,5 +1,5 @@
 #include "../backend/Backend.hpp"
-#include "RNG.hpp"
+#include "../datastructs/RNG.hpp"
 #include <gtest/gtest.h>
 
 TEST(BackendTest, BellStateHistogram) {

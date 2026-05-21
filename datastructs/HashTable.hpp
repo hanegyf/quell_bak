@@ -46,6 +46,8 @@ public:
   bool empty() const;  // get is empty
 
   double load_factor() const; // return current load factor
+
+  template <typename Fn> void for_each(Fn fn) const; // iteration
 };
 
 #include "HashTable.tpp" // implementation

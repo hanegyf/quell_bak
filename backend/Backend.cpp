@@ -314,6 +314,22 @@ void Backend::collapse_qubit(Statevector &state,
   }
 }
 
+void Backend::reset_qubit(Statevector &state, size_t qubit) const { // rest back to 0
+    size_t dim = state.size();
+    size_t mask = 1ULL << qubit;
+
+    for (size_t i = 0; i < dim; ++i) { // move all amplitude into |0>, zero the |1>
+        if ((i & mask) == 0) {
+            size_t j = i | mask;
+            
+            state[i] += state[j]; // i and j are paired, only process 0 side
+            state[j] = Complex(0.0, 0.0);
+        }
+    }
+
+    state.normalize(); // renormalize
+}
+
 void Backend::measure_qubit(Statevector &state, size_t qubit,
                             size_t &result, // measure a single qubit
                             RNG &rng) const {
@@ -326,9 +342,20 @@ void Backend::measure_qubit(Statevector &state, size_t qubit,
       p0 += state[i].norm(); // add norm to overall probability of getting 0
   }
 
-  double r = rng.uniform();
-  result = (r < p0) ? 0 : 1; // if you got less than p0, collapse to 0, else 1
-  collapse_qubit(state, qubit, result); // collapse qubit
+  // help with floating point errors
+  if (p0 < 0.0) p0 = 0.0;
+  if (p0 > 1.0) p0 = 1.0;
+
+  static const double EPS = 1e-15;
+
+  if (p0 <= EPS) {
+    result = 1;
+  } else if (p0 >= 1.0 - EPS) {
+    result = 0;
+  } else {
+    double r = rng.uniform();
+    result = (r < p0) ? 0 : 1; // if less than p0, collapse to 0, else 1
+  }
 }
 
 size_t Backend::encode_bits(
@@ -362,7 +389,7 @@ void Backend::run(RNG &rng) {              // run code
       if (instr.op == OpCode::Init) { // error handling stuff
         if (instr.target >= num_qubits)
           throw std::runtime_error("INIT qubit out of range");
-        collapse_qubit(state, instr.target, 0);
+        reset_qubit(state, instr.target);
         locked[instr.target] = 0;
         continue;
       }
