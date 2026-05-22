@@ -19,7 +19,7 @@ enum class TokenKind {
     KwElse,
     KwTrue,
     KwFalse,
-    KwReturn
+    KwReturn,
 
     // type Keywords
     KwVoid,

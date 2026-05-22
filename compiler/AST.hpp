@@ -7,6 +7,7 @@
 
 enum class GateStmtKind { // types of gate statements
     H,X,Y,Z,S,T,
+    RX, RY, RZ, PHASE, // parameterized gates
     CX,CZ,CNOT,
     SWAP,
     MEASURE,
@@ -24,50 +25,34 @@ struct LetRegDecl { // declare a register
     size_t size = 0;
 };
 
-// New classical expression and statement nodes
-enum class ScalarType {
-    Int,
-    Bool
-};
+// classical expression and statement nodes
+enum class ScalarType { Int, Bool };
 
 enum class ExprKind {
     IntLit,
     BoolLit,
     Var,
 
-    Call, // for function calls
+    Call,
 
-    Add,
-    Sub,
-    Mul,
-    Div,
-
-    Eq,
-    Ne,
-    Lt,
-    Le,
-    Gt,
-    Ge
+    Add, Sub, Mul, Div,
+    Eq, Ne, Lt, Le, Gt, Ge
 };
 
 struct Expr {
     ExprKind kind = ExprKind::IntLit;
 
-    // payload
     long long int_value = 0;
     bool bool_value = false;
     String var_name;
 
-    // for calls
     String call_name;
     DynamicArray<Expr*> call_args;
 
-    // children (binary ops)
     Expr* left = nullptr;
     Expr* right = nullptr;
 };
 
-// Simple owning arena so we don't need std::vector or smart pointers bc no outside datastructs
 struct ExprArena {
     DynamicArray<Expr*> nodes;
 
@@ -85,12 +70,16 @@ struct ExprArena {
 struct LetScalarDecl {
     ScalarType type = ScalarType::Int;
     String name;
-    Expr* init = nullptr; // required for v1
+    Expr* init = nullptr;
 };
 
-struct GateStmt { // gate statement applied on place
+struct GateStmt {
     GateStmtKind kind;
     DynamicArray<Operand> ops;
+
+    // optional parameter for RX/RY/RZ/PHASE
+    bool has_param = false;
+    double param = 0.0;
 };
 
 struct IfStmt {
@@ -99,18 +88,11 @@ struct IfStmt {
     DynamicArray<struct Stmt> else_body;
 };
 
-// General type references for function params/returns, pass "anything" via the call stack by encoding as ints/pairs
-enum class TypeKind {
-    Void,
-    Int,
-    Bool,
-    QReg,
-    BReg
-};
+enum class TypeKind { Void, Int, Bool, QReg, BReg };
 
 struct TypeRef {
     TypeKind kind = TypeKind::Void;
-    size_t reg_size = 0; // only used for qreg<bignum> and breg<bignum>
+    size_t reg_size = 0;
 };
 
 struct Param {
@@ -118,7 +100,7 @@ struct Param {
     TypeRef type;
 };
 
-struct Stmt { // statement
+struct Stmt {
     enum class Kind { LetReg, LetScalar, If, Gate, Return, Empty } kind;
 
     LetRegDecl letreg;
@@ -127,22 +109,20 @@ struct Stmt { // statement
 
     GateStmt gate;
 
-    // Return statement
-    Expr* ret_expr = nullptr; // null means "return;" (only valid for void)
+    Expr* ret_expr = nullptr;
 };
 
-struct Function { // function - main thing bc functional langugae
+struct Function {
     String name;
 
-    // Parameters + return type
     DynamicArray<Param> params;
     TypeRef return_type;
 
-    ExprArena arena;           // owns expression nodes used in this function
+    ExprArena arena;
     DynamicArray<Stmt> body;
 };
 
-struct Program { // program is just an array of functions
+struct Program {
     DynamicArray<Function> functions;
 };
 

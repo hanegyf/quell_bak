@@ -18,19 +18,19 @@ char Lexer::get() { // consume next character
 }
 
 bool Lexer::is_ident_start(char c) {
-    return std::isalpha(static_cast<unsigned char>(c)) || c == '_'; // is alphabetic or underscore
+    return std::isalpha(static_cast<unsigned char>(c)) || c == '_';
 }
 
 bool Lexer::is_ident_continue(char c) {
-    return std::isalnum(static_cast<unsigned char>(c)) || c == '_'; // is alphanumeric or underscore
+    return std::isalnum(static_cast<unsigned char>(c)) || c == '_';
 }
 
-void Lexer::skip_ws_and_comments() { // skip all whitespace and comments (duh)
+void Lexer::skip_ws_and_comments() {
     while (!eof()) {
         while (!eof() && std::isspace(static_cast<unsigned char>(peek())))
             get();
 
-        if (peek() == '#') { // comment goes till end of line
+        if (peek() == '#') {
             while (!eof() && peek() != '\n') get();
             continue;
         }
@@ -65,18 +65,16 @@ TokenKind Lexer::keyword_kind(const String& s) const {
   if (s == "func") return TokenKind::KwFunc;
   if (s == "let") return TokenKind::KwLet;
 
-  // New classical stuff - if/else and booleans
   if (s == "if") return TokenKind::KwIf;
   if (s == "else") return TokenKind::KwElse;
   if (s == "true") return TokenKind::KwTrue;
   if (s == "false") return TokenKind::KwFalse;
-  if (s == "return") return TokenKind::KwReturn; // NEW
+  if (s == "return") return TokenKind::KwReturn;
 
   if (s == "void") return TokenKind::KwVoid;
   if (s == "qreg") return TokenKind::KwQreg;
   if (s == "breg") return TokenKind::KwBreg;
 
-  // More new classical stuff - primitive types
   if (s == "int") return TokenKind::KwInt;
   if (s == "bool") return TokenKind::KwBool;
 
@@ -87,6 +85,13 @@ TokenKind Lexer::keyword_kind(const String& s) const {
   if (s == "Z") return TokenKind::KwZ;
   if (s == "S") return TokenKind::KwS;
   if (s == "T") return TokenKind::KwT;
+
+  // Parameterized gates
+  if (s == "RX") return TokenKind::KwRX;
+  if (s == "RY") return TokenKind::KwRY;
+  if (s == "RZ") return TokenKind::KwRZ;
+  if (s == "PHASE") return TokenKind::KwPHASE;
+
   if (s == "CX") return TokenKind::KwCX;
   if (s == "CZ") return TokenKind::KwCZ;
   if (s == "CNOT") return TokenKind::KwCNOT;
@@ -94,7 +99,7 @@ TokenKind Lexer::keyword_kind(const String& s) const {
   if (s == "MEASURE") return TokenKind::KwMEASURE;
   if (s == "RESET") return TokenKind::KwRESET;
 
-  return TokenKind::Identifier; // default
+  return TokenKind::Identifier;
 }
 
 Token Lexer::lex_identifier_or_keyword() {
@@ -127,7 +132,6 @@ LexResult Lexer::lex() {
 
         if (c == '-' && peek(1) == '>') { get(); get(); out.tokens.push_back(make(TokenKind::Arrow,  begin, pos, "->")); continue; }
 
-        // New 2 character operators
         if (c == '=' && peek(1) == '=') { get(); get(); out.tokens.push_back(make(TokenKind::EqEq, begin, pos, "==")); continue; }
         if (c == '!' && peek(1) == '=') { get(); get(); out.tokens.push_back(make(TokenKind::NotEq, begin, pos, "!=")); continue; }
         if (c == '<' && peek(1) == '=') { get(); get(); out.tokens.push_back(make(TokenKind::LtEq, begin, pos, "<=")); continue; }
