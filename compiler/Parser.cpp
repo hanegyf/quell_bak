@@ -1,5 +1,6 @@
 #include "Parser.hpp"
 #include <cstdlib>
+#include <cstdio>
 
 Parser::Parser(const DynamicArray<Token> &toks) : t(toks), i(0), errors(nullptr), ok(true), current_fn(nullptr) {} // constructor
 
@@ -94,7 +95,6 @@ bool Parser::parse_function(Function& out) { // parse a function: func name(para
 
     if (!expect(TokenKind::Arrow, "Expected '->'")) return false;
 
-    // return type
     if (!parse_type_ref(out.return_type)) return false;
 
     current_fn = &out;
@@ -124,7 +124,7 @@ bool Parser::parse_stmt(Stmt& out) { // parse an individual statement
     if (at(TokenKind::KwLet)) {
         size_t save = i;
         Stmt tmp;
-        if (parse_let_reg(tmp)) { out = tmp; return true; } // check if register first
+        if (parse_let_reg(tmp)) { out = tmp; return true; }
         i = save;
         return parse_let_scalar(out);
     }
@@ -132,9 +132,10 @@ bool Parser::parse_stmt(Stmt& out) { // parse an individual statement
     if (at(TokenKind::KwIf)) return parse_if(out);
     if (at(TokenKind::KwReturn)) return parse_return(out);
 
-    switch (cur().kind) { // handles gates
+    switch (cur().kind) {
         case TokenKind::KwH: case TokenKind::KwX: case TokenKind::KwY: case TokenKind::KwZ:
         case TokenKind::KwS: case TokenKind::KwT:
+        case TokenKind::KwRX: case TokenKind::KwRY: case TokenKind::KwRZ: case TokenKind::KwPHASE:
         case TokenKind::KwCX: case TokenKind::KwCZ: case TokenKind::KwCNOT:
         case TokenKind::KwSWAP:
         case TokenKind::KwMEASURE:
@@ -149,7 +150,6 @@ bool Parser::parse_stmt(Stmt& out) { // parse an individual statement
 bool Parser::parse_return(Stmt& out) {
     expect(TokenKind::KwReturn, "Expected return");
 
-    // allow "return;" for void
     if (match(TokenKind::Semicolon)) {
         out.kind = Stmt::Kind::Return;
         out.ret_expr = nullptr;
@@ -179,7 +179,7 @@ bool Parser::parse_reg_type_size(size_t& outSize, bool& isQReg) { // parse a reg
     return true;
 }
 
-bool Parser::parse_let_reg(Stmt& out) { // parse a let statement for registers only
+bool Parser::parse_let_reg(Stmt& out) {
     expect(TokenKind::KwLet, "Expected let");
 
     if (!expect(TokenKind::Identifier, "Expected identifier after let")) return false;
@@ -200,7 +200,7 @@ bool Parser::parse_let_reg(Stmt& out) { // parse a let statement for registers o
     return true;
 }
 
-bool Parser::parse_let_scalar(Stmt& out) { // parse a scalar declaration
+bool Parser::parse_let_scalar(Stmt& out) {
     expect(TokenKind::KwLet, "Expected let");
 
     if (!expect(TokenKind::Identifier, "Expected identifier after let")) return false;
@@ -227,7 +227,7 @@ bool Parser::parse_let_scalar(Stmt& out) { // parse a scalar declaration
     return true;
 }
 
-bool Parser::parse_if(Stmt& out) { // parse an if statement
+bool Parser::parse_if(Stmt& out) {
     expect(TokenKind::KwIf, "Expected if");
 
     if (!expect(TokenKind::LParen, "Expected '(' after if")) return false;
@@ -249,7 +249,7 @@ bool Parser::parse_if(Stmt& out) { // parse an if statement
     return true;
 }
 
-bool Parser::parse_operand(Operand& out) { // parse an operand (identifier[index])
+bool Parser::parse_operand(Operand& out) {
     if (!expect(TokenKind::Identifier, "Expected operand base identifier")) return false;
     out.base = t[i-1].lexeme;
 
@@ -263,9 +263,17 @@ bool Parser::parse_operand(Operand& out) { // parse an operand (identifier[index
   return true;
 }
 
-bool Parser::parse_gate_stmt(Stmt& out) { // parse a gate statement ( gate[int][int][int]...;)
+static bool is_param_gate(TokenKind tk) { // parameterized gate stuff
+    return tk == TokenKind::KwRX || tk == TokenKind::KwRY || tk == TokenKind::KwRZ || tk == TokenKind::KwPHASE;
+}
+
+bool Parser::parse_gate_stmt(Stmt& out) {
     TokenKind tk = cur().kind;
     ++i;
+
+    GateStmt gs;
+    gs.has_param = false;
+    gs.param = 0.0;
 
     GateStmtKind gk;
     if (tk == TokenKind::KwH) gk = GateStmtKind::H;
@@ -274,6 +282,10 @@ bool Parser::parse_gate_stmt(Stmt& out) { // parse a gate statement ( gate[int][
     else if (tk == TokenKind::KwZ) gk = GateStmtKind::Z;
     else if (tk == TokenKind::KwS) gk = GateStmtKind::S;
     else if (tk == TokenKind::KwT) gk = GateStmtKind::T;
+    else if (tk == TokenKind::KwRX) gk = GateStmtKind::RX;
+    else if (tk == TokenKind::KwRY) gk = GateStmtKind::RY;
+    else if (tk == TokenKind::KwRZ) gk = GateStmtKind::RZ;
+    else if (tk == TokenKind::KwPHASE) gk = GateStmtKind::PHASE;
     else if (tk == TokenKind::KwCX) gk = GateStmtKind::CX;
     else if (tk == TokenKind::KwCZ) gk = GateStmtKind::CZ;
     else if (tk == TokenKind::KwCNOT) gk = GateStmtKind::CNOT;
@@ -281,8 +293,17 @@ bool Parser::parse_gate_stmt(Stmt& out) { // parse a gate statement ( gate[int][
     else if (tk == TokenKind::KwMEASURE) gk = GateStmtKind::MEASURE;
     else gk = GateStmtKind::RESET;
 
-    GateStmt gs;
     gs.kind = gk;
+
+    // Parse parameter list for RX/RY/RZ/PHASE: GateName '(' Number ')'
+    // Only integer numbers, stored as double, bc floats don't work yet
+    if (is_param_gate(tk)) {
+        if (!expect(TokenKind::LParen, "Expected '(' after parameterized gate")) return false;
+        if (!expect(TokenKind::Number, "Expected numeric parameter for gate")) return false;
+        gs.has_param = true;
+        gs.param = std::strtod(t[i-1].lexeme.c_str(), nullptr);
+        if (!expect(TokenKind::RParen, "Expected ')' after gate parameter")) return false;
+    }
 
     while (!at(TokenKind::Semicolon)) {
         Operand op;
@@ -296,10 +317,8 @@ bool Parser::parse_gate_stmt(Stmt& out) { // parse a gate statement ( gate[int][
     return true;
 }
 
-// expressions for precedence stuff
-Expr* Parser::parse_expr() {
-    return parse_comparison();
-}
+// expressions
+Expr* Parser::parse_expr() { return parse_comparison(); }
 
 Expr* Parser::parse_comparison() {
     Expr* left = parse_term();
@@ -399,7 +418,6 @@ Expr* Parser::parse_primary() {
     if (match(TokenKind::Identifier)) {
         String name = t[i-1].lexeme;
 
-        // call: ident '(' args ')'
         if (match(TokenKind::LParen)) {
             Expr* call = current_fn->arena.make();
             call->kind = ExprKind::Call;
@@ -419,7 +437,6 @@ Expr* Parser::parse_primary() {
             return call;
         }
 
-        // variable
         Expr* e = current_fn->arena.make();
         e->kind = ExprKind::Var;
         e->var_name = name;

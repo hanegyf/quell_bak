@@ -32,6 +32,7 @@ enum class TokenKind {
 
     // gate keywords (reserved)
     KwH, KwX, KwY, KwZ, KwS, KwT,
+    KwRX, KwRY, KwRZ, KwPHASE, // parameterised
     KwCX, KwCZ, KwCNOT, KwSWAP, // both CX and CNOT valid
     KwMEASURE, KwRESET,
 
