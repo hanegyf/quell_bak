@@ -32,7 +32,8 @@ enum class ExprKind {
     IntLit,
     BoolLit,
     Var,
-
+    
+    RegRead, // reg[index] read in classical expression
     Call,
 
     Add, Sub, Mul, Div,

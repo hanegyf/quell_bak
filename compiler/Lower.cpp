@@ -122,6 +122,7 @@ static bool lower_stmt_list(LowerResult& r,
 
 // Forward declaration of the full program pointer so call lowering can find functions
 static const Program* g_program = nullptr;
+static const HashTable<String, BRegInfo>* g_bregs = nullptr;
 
 // expression lowering, returns the classical register index containing the expression result
 static size_t lower_expr(LowerResult& r,
@@ -147,6 +148,24 @@ static size_t lower_expr(LowerResult& r,
       return 0;
     }
     return scalars.at(e->var_name).reg;
+  }
+  if (e->kind == ExprKind::RegRead) { // reg[index] read copies bit register value into a temp classical reg
+    if (!g_bregs) { push_err(r, "RegRead with no breg context"); return 0; }
+    if (!g_bregs->contains(e->var_name)) {
+      push_err(r, "Unknown breg name in register read expression");
+      return 0;
+    }
+    const BRegInfo& info = g_bregs->at(e->var_name);
+    size_t index = static_cast<size_t>(e->int_value);
+    if (index >= info.size) {
+      push_err(r, "Register read index out of range");
+      return 0;
+    }
+    size_t abs_bit = info.base + index; // absolute bit index in creg[]
+    // creg[abs_bit] is already kept in sync with measurement results via the "creg[instr.bit] = result" in Backend::run(), so just MOV it into a fresh temp reg and return that
+    size_t dst = next_temp_reg++;
+    emit_classical(r, fmt2("MOV", dst, abs_bit));
+    return dst;
   }
 
   // Function call lowering using PUSH/CALL/POP
@@ -504,10 +523,13 @@ LowerResult lower_to_q(const Program& p) { // lower fully down to .q format
   // BITS now represents the size of the backend classical register file, includes breg bits (measurement targets), scalar variables, temporaries used during lowering
   size_t temp_base = next_cbase;
   size_t next_temp_reg = temp_base;
+  g_bregs = &bregs; // make visible to lower_expr for reg_read
 
   // Second pass: lower all statements (including lets/ifs/gates) into .q lines
   if (!lower_stmt_list(r, main_fn->body, qregs, bregs, scalars, next_temp_reg))
     return r;
+
+  g_bregs = nullptr; // clear when done
 
   // finalize classical reg count
   r.num_bits = next_temp_reg;

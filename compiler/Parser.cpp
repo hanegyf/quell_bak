@@ -420,6 +420,19 @@ Expr* Parser::parse_primary() {
     if (match(TokenKind::Identifier)) {
         String name = t[i-1].lexeme;
 
+        // reg[index] read — e.g. c[0] in a scalar expression
+        if (match(TokenKind::LBracket)) {
+            if (!expect(TokenKind::Number, "Expected integer index in register read")) return nullptr;
+            size_t index = static_cast<size_t>(std::strtoull(t[i-1].lexeme.c_str(), nullptr, 10));
+            if (!expect(TokenKind::RBracket, "Expected ']' after register index")) return nullptr;
+
+            Expr* e = current_fn->arena.make();
+            e->kind = ExprKind::RegRead;
+            e->var_name = name;    // reuse var_name for the register name
+            e->int_value = static_cast<long long>(index); // reuse int_value for index
+            return e;
+        }
+
         if (match(TokenKind::LParen)) {
             Expr* call = current_fn->arena.make();
             call->kind = ExprKind::Call;
