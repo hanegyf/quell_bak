@@ -56,6 +56,16 @@ static size_t parse_size_t(const char *&p) { // convert token to size_t
   return static_cast<size_t>(value);
 }
 
+static long long parse_i64(const char *&p) { // convert token to signed int64
+  skip_ws(p);
+  char *end = nullptr;
+  long long value = std::strtoll(p, &end, 10);
+  if (end == p)
+    throw std::runtime_error("Expected integer");
+  p = end;
+  return value;
+}
+
 static double parse_double(const char *&p) { // convert token to double
   skip_ws(p);
   char *end = nullptr;
@@ -207,7 +217,76 @@ Instruction Backend::parse_instruction_line(
     Instruction instr;
     instr.op = OpCode::Measure;     // Measure OpCode
     instr.target = parse_size_t(p); // get qubit index
-    instr.bit = parse_size_t(p);    // get bit index
+    instr.bit = parse_size_t(p);    // get bit index (also classical register index)
+    return instr;
+  }
+
+  // New classical VM ops
+  // Example layout bc its confusing
+  //   MOVI dst imm
+  //   MOV  dst src
+  //   ADD  dst a b
+  //   CMPEQ dst a b
+  //   JMP offset
+  //   JZ  reg offset
+  //   JNZ reg offset
+  if (opcode == String("MOVI")) {
+    Instruction instr;
+    instr.op = OpCode::MovImm;
+    instr.dst = parse_size_t(p);
+    instr.imm = parse_i64(p);
+    return instr;
+  }
+  if (opcode == String("MOV")) {
+    Instruction instr;
+    instr.op = OpCode::Mov;
+    instr.dst = parse_size_t(p);
+    instr.src1 = parse_size_t(p);
+    return instr;
+  }
+  if (opcode == String("ADD") || opcode == String("SUB") ||
+      opcode == String("MUL") || opcode == String("DIV")) {
+    Instruction instr;
+    instr.op = (opcode == String("ADD")) ? OpCode::Add :
+               (opcode == String("SUB")) ? OpCode::Sub :
+               (opcode == String("MUL")) ? OpCode::Mul : OpCode::Div;
+    instr.dst = parse_size_t(p);
+    instr.src1 = parse_size_t(p);
+    instr.src2 = parse_size_t(p);
+    return instr;
+  }
+  if (opcode == String("CMPEQ") || opcode == String("CMPNE") ||
+      opcode == String("CMPLT") || opcode == String("CMPLE") ||
+      opcode == String("CMPGT") || opcode == String("CMPGE")) {
+    Instruction instr;
+    instr.op = (opcode == String("CMPEQ")) ? OpCode::CmpEq :
+               (opcode == String("CMPNE")) ? OpCode::CmpNe :
+               (opcode == String("CMPLT")) ? OpCode::CmpLt :
+               (opcode == String("CMPLE")) ? OpCode::CmpLe :
+               (opcode == String("CMPGT")) ? OpCode::CmpGt : OpCode::CmpGe;
+    instr.dst = parse_size_t(p);
+    instr.src1 = parse_size_t(p);
+    instr.src2 = parse_size_t(p);
+    return instr;
+  }
+  if (opcode == String("JMP")) {
+    Instruction instr;
+    instr.op = OpCode::Jmp;
+    instr.imm = parse_i64(p); // pc-relative offset
+    return instr;
+  }
+  if (opcode == String("JZ")) {
+    Instruction instr;
+    instr.op = OpCode::JmpIfZero;
+    instr.src1 = parse_size_t(p); // reg
+    instr.imm = parse_i64(p);     // offset
+    return instr;
+  }
+  if (opcode == String("JNZ")) {
+    Instruction instr;
+    instr.op = OpCode::JmpIfNonZero;
+    instr.src1 = parse_size_t(p); // reg
+    instr.imm = parse_i64(p);     // offset
     return instr;
   }
 
@@ -264,7 +343,7 @@ void Backend::load(const String &filepath) { // load from file path to program
       if (token == String("QUBITS")) {
         num_qubits = parse_size_t(p); // num qubits
       } else if (token == String("BITS")) {
-        num_bits = parse_size_t(p); // num bits
+        num_bits = parse_size_t(p); // num bits / classical reg count
       } else if (token == String("SHOTS")) {
         num_shots = parse_size_t(p); // num shots (default to 1)
       }
@@ -294,40 +373,34 @@ void Backend::collapse_qubit(Statevector &state,
 
   double norm = 0.0;
   for (size_t i = 0; i < dim; ++i) {
-    if (((i & mask) != 0) !=
-        (value != 0)) // if on the correct qubit and the value to collapse to is
-                      // 0, or not on the correct qubit and the value to be
-                      // collapsed to is not 0
-      state[i] = Complex(0.0, 0.0); // set that state to be 0
+    if (((i & mask) != 0) != (value != 0))
+      state[i] = Complex(0.0, 0.0);
     else
-      norm +=
-          state[i]
-              .norm(); // otherwise, add the norm for overall renormalization
+      norm += state[i].norm();
   }
 
-  if (norm <= 0.0) // if floating point error or smthg
+  if (norm <= 0.0)
     throw std::runtime_error("Collapse resulted in zero norm");
 
-  double inv = 1.0 / std::sqrt(norm); // renormalize
+  double inv = 1.0 / std::sqrt(norm);
   for (size_t i = 0; i < dim; ++i) {
     state[i] *= inv;
   }
 }
 
-void Backend::reset_qubit(Statevector &state, size_t qubit) const { // rest back to 0
-    size_t dim = state.size();
-    size_t mask = 1ULL << qubit;
+void Backend::reset_qubit(Statevector &state, size_t qubit) const {
+  size_t dim = state.size();
+  size_t mask = 1ULL << qubit;
 
-    for (size_t i = 0; i < dim; ++i) { // move all amplitude into |0>, zero the |1>
-        if ((i & mask) == 0) {
-            size_t j = i | mask;
-            
-            state[i] += state[j]; // i and j are paired, only process 0 side
-            state[j] = Complex(0.0, 0.0);
-        }
+  for (size_t i = 0; i < dim; ++i) {
+    if ((i & mask) == 0) {
+      size_t j = i | mask;
+      state[i] = state[i] + state[j];
+      state[j] = Complex(0.0, 0.0);
     }
+  }
 
-    state.normalize(); // renormalize
+  state.normalize();
 }
 
 void Backend::measure_qubit(Statevector &state, size_t qubit,
@@ -338,24 +411,25 @@ void Backend::measure_qubit(Statevector &state, size_t qubit,
   double p0 = 0.0;
 
   for (size_t i = 0; i < dim; ++i) {
-    if ((i & mask) == 0)     // if not on correct qubit
-      p0 += state[i].norm(); // add norm to overall probability of getting 0
+    if ((i & mask) == 0)
+      p0 += state[i].norm();
   }
 
-  // help with floating point errors
+  // Numerical safety (important once you start doing lots of classical control)
   if (p0 < 0.0) p0 = 0.0;
   if (p0 > 1.0) p0 = 1.0;
 
   static const double EPS = 1e-15;
-
   if (p0 <= EPS) {
     result = 1;
   } else if (p0 >= 1.0 - EPS) {
     result = 0;
   } else {
     double r = rng.uniform();
-    result = (r < p0) ? 0 : 1; // if less than p0, collapse to 0, else 1
+    result = (r < p0) ? 0 : 1;
   }
+
+  collapse_qubit(state, qubit, result);
 }
 
 size_t Backend::encode_bits(
@@ -372,25 +446,99 @@ void Backend::run(RNG &rng) {              // run code
   histogram = HashTable<size_t, size_t>(); // results
   has_last_state = false;
 
-  for (size_t shot = 0; shot < num_shots; ++shot) { // for each run through
+  for (size_t shot = 0; shot < num_shots; ++shot) {
     Statevector state(num_qubits);
 
-    DynamicArray<size_t> classical;
+    // classical bits used for histogram encoding (kept as size_t for minimal changes)
+    DynamicArray<size_t> classical_bits;
     for (size_t i = 0; i < num_bits; ++i)
-      classical.push_back(0);
+      classical_bits.push_back(0);
+
+    // classical register file (new): supports arithmetic + if/jumps
+    DynamicArray<long long> creg;
+    for (size_t i = 0; i < num_bits; ++i)
+      creg.push_back(0);
 
     DynamicArray<size_t> locked;
     for (size_t i = 0; i < num_qubits; ++i)
       locked.push_back(0);
 
-    for (size_t i = 0; i < program.get_size(); ++i) { // do each instruction
-      const Instruction &instr = program[i];
+    // Use a program counter so JMP/JZ/JNZ work
+    long long pc = 0;
+    while (pc >= 0 && static_cast<size_t>(pc) < program.get_size()) {
+      const Instruction &instr = program[static_cast<size_t>(pc)];
 
-      if (instr.op == OpCode::Init) { // error handling stuff
+      // classical execution
+      if (instr.op == OpCode::MovImm) {
+        if (instr.dst >= num_bits) throw std::runtime_error("MOVI dst out of range");
+        creg[instr.dst] = instr.imm;
+        pc += 1;
+        continue;
+      }
+      if (instr.op == OpCode::Mov) {
+        if (instr.dst >= num_bits || instr.src1 >= num_bits) throw std::runtime_error("MOV reg out of range");
+        creg[instr.dst] = creg[instr.src1];
+        pc += 1;
+        continue;
+      }
+      if (instr.op == OpCode::Add || instr.op == OpCode::Sub ||
+          instr.op == OpCode::Mul || instr.op == OpCode::Div) {
+        if (instr.dst >= num_bits || instr.src1 >= num_bits || instr.src2 >= num_bits)
+          throw std::runtime_error("ALU reg out of range");
+        long long a = creg[instr.src1];
+        long long b = creg[instr.src2];
+        if (instr.op == OpCode::Add) creg[instr.dst] = a + b;
+        else if (instr.op == OpCode::Sub) creg[instr.dst] = a - b;
+        else if (instr.op == OpCode::Mul) creg[instr.dst] = a * b;
+        else {
+          if (b == 0) throw std::runtime_error("DIV by zero");
+          creg[instr.dst] = a / b;
+        }
+        pc += 1;
+        continue;
+      }
+      if (instr.op == OpCode::CmpEq || instr.op == OpCode::CmpNe ||
+          instr.op == OpCode::CmpLt || instr.op == OpCode::CmpLe ||
+          instr.op == OpCode::CmpGt || instr.op == OpCode::CmpGe) {
+        if (instr.dst >= num_bits || instr.src1 >= num_bits || instr.src2 >= num_bits)
+          throw std::runtime_error("CMP reg out of range");
+        long long a = creg[instr.src1];
+        long long b = creg[instr.src2];
+        bool v = false;
+        if (instr.op == OpCode::CmpEq) v = (a == b);
+        else if (instr.op == OpCode::CmpNe) v = (a != b);
+        else if (instr.op == OpCode::CmpLt) v = (a < b);
+        else if (instr.op == OpCode::CmpLe) v = (a <= b);
+        else if (instr.op == OpCode::CmpGt) v = (a > b);
+        else v = (a >= b);
+        creg[instr.dst] = v ? 1 : 0;
+        pc += 1;
+        continue;
+      }
+      if (instr.op == OpCode::Jmp) {
+        pc += instr.imm;
+        continue;
+      }
+      if (instr.op == OpCode::JmpIfZero) {
+        if (instr.src1 >= num_bits) throw std::runtime_error("JZ reg out of range");
+        if (creg[instr.src1] == 0) pc += instr.imm;
+        else pc += 1;
+        continue;
+      }
+      if (instr.op == OpCode::JmpIfNonZero) {
+        if (instr.src1 >= num_bits) throw std::runtime_error("JNZ reg out of range");
+        if (creg[instr.src1] != 0) pc += instr.imm;
+        else pc += 1;
+        continue;
+      }
+
+      // quantum execution
+      if (instr.op == OpCode::Init) {
         if (instr.target >= num_qubits)
           throw std::runtime_error("INIT qubit out of range");
         reset_qubit(state, instr.target);
         locked[instr.target] = 0;
+        pc += 1;
         continue;
       }
 
@@ -401,8 +549,12 @@ void Backend::run(RNG &rng) {              // run code
           throw std::runtime_error("MEASURE bit out of range");
         size_t result = 0;
         measure_qubit(state, instr.target, result, rng);
-        classical[instr.bit] = result;
+
+        classical_bits[instr.bit] = result;
+        creg[instr.bit] = static_cast<long long>(result); // keep regs in sync
+
         locked[instr.target] = 1;
+        pc += 1;
         continue;
       }
 
@@ -410,24 +562,31 @@ void Backend::run(RNG &rng) {              // run code
         if (instr.target >= num_qubits)
           throw std::runtime_error("Gate target out of range");
         if (locked[instr.target])
-          throw std::runtime_error(
-              "Gate applied to measured qubit without INIT");
+          throw std::runtime_error("Gate applied to measured qubit without INIT");
         if (instr.control && *instr.control >= num_qubits)
           throw std::runtime_error("Gate control out of range");
         if (instr.control && locked[*instr.control])
-          throw std::runtime_error(
-              "Gate control is a measured qubit without INIT");
+          throw std::runtime_error("Gate control is a measured qubit without INIT");
 
-        Matrix gate = resolve_gate(instr.gate,
-                                   instr.parameter); // resolve the instruction
+        Matrix gate = resolve_gate(instr.gate, instr.parameter);
         if (instr.control)
-          state.apply_gate(gate, instr.target, instr.control); // apply the gate
+          state.apply_gate(gate, instr.target, instr.control);
         else
           state.apply_gate(gate, instr.target, std::nullopt);
+
+        pc += 1;
+        continue;
       }
+
+      if (instr.op == OpCode::End) {
+        break;
+      }
+
+      // If we reach here, it's an unknown opcode
+      throw std::runtime_error("Unknown opcode during execution");
     }
 
-    size_t outcome = encode_bits(classical); // add outcome to histogram
+    size_t outcome = encode_bits(classical_bits);
     if (histogram.contains(outcome))
       histogram.at(outcome) += 1;
     else

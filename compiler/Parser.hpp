@@ -23,6 +23,8 @@ class Parser { // actual parser
         DynamicArray<String>* errors; // error handling
         bool ok;
 
+        Function* current_fn; // for arena allocation
+
         const Token& cur() const; // current token
         bool at(TokenKind k) const;
         bool match(TokenKind k);
@@ -32,14 +34,24 @@ class Parser { // actual parser
 
         // parse all different token stuff
         bool parse_function(Function& out);
-        bool parse_block(Function& fn);
+        bool parse_block(Function& fn, DynamicArray<Stmt>& out_body);
         bool parse_stmt(Stmt& out);
 
         bool parse_let_reg(Stmt& out);
+        bool parse_let_scalar(Stmt& out);
+        bool parse_if(Stmt& out);
+
         bool parse_gate_stmt(Stmt& out);
         bool parse_operand(Operand& out);
 
         bool parse_reg_type_size(size_t& outSize, bool& isQReg);
+
+        // expressions (precedence climbing)
+        Expr* parse_expr();
+        Expr* parse_comparison();
+        Expr* parse_term();
+        Expr* parse_factor();
+        Expr* parse_primary();
 };
 
 #endif

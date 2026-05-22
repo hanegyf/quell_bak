@@ -1,7 +1,7 @@
 #include "Parser.hpp"
 #include <cstdlib>
 
-Parser::Parser(const DynamicArray<Token> &toks) : t(toks), i(0), errors(nullptr), ok(true) {} // constructor
+Parser::Parser(const DynamicArray<Token> &toks) : t(toks), i(0), errors(nullptr), ok(true), current_fn(nullptr) {} // constructor
 
 const Token& Parser::cur() const { return t[i]; } // current token
 bool Parser::at(TokenKind k) const {return cur().kind == k; } // if where we are is that token kind
@@ -52,19 +52,22 @@ bool Parser::parse_function(Function& out) { // parse a function: func name() ->
     if (!expect(TokenKind::Arrow, "Expected '->'")) return false;
     if (!expect(TokenKind::KwVoid, "Expected return type 'void' (returning not handled yet)")) return false;
 
-    return parse_block(out);
+    current_fn = &out;
+    bool ok_block = parse_block(out, out.body);
+    current_fn = nullptr;
+    return ok_block;
 }
 
-bool Parser::parse_block(Function& fn) { // parse a block {...}
-    if (!expect(TokenKind::LBrace, "Expected '{' to start function body")) return false;
-    
+bool Parser::parse_block(Function& fn, DynamicArray<Stmt>& out_body) { // parse a block {...}
+    if (!expect(TokenKind::LBrace, "Expected '{' to start block")) return false;
+
     while (!at(TokenKind::RBrace) && !at(TokenKind::End)) {
         Stmt s;
         if (!parse_stmt(s)) return false;
-        fn.body.push_back(s);
+        out_body.push_back(s);
     }
 
-    return expect(TokenKind::RBrace, "Expected '}' to end function body");
+    return expect(TokenKind::RBrace, "Expected '}' to end block");
 }
 
 bool Parser::parse_stmt(Stmt& out) { // parse an individual statement
@@ -73,13 +76,29 @@ bool Parser::parse_stmt(Stmt& out) { // parse an individual statement
         return true;
     }
 
-    if (at(TokenKind::KwLet)) return parse_let_reg(out);
+    if (at(TokenKind::KwLet)) {
+        // decide whether it's let reg or let scalar by looking ahead after ':'
+        // let <ident> : <type> ...
+        size_t save = i;
+        Stmt tmp;
+        if (parse_let_reg(tmp)) { out = tmp; return true; } // check if register first
+        // restore and try scalar
+        i = save;
+        return parse_let_scalar(out);
+    }
 
-    switch (cur().kind) { // handles pretty much only gates right now - omg this takes so long to write
-        case TokenKind::KwH: case TokenKind::KwX: case TokenKind::KwY: case TokenKind::KwZ: case TokenKind::KwS: case TokenKind::KwT: case TokenKind::KwCX: case TokenKind::KwCZ: case TokenKind::KwCNOT: case TokenKind::KwSWAP: case TokenKind::KwMEASURE: case TokenKind::KwRESET:
+    if (at(TokenKind::KwIf)) return parse_if(out);
+
+    switch (cur().kind) { // handles gates
+        case TokenKind::KwH: case TokenKind::KwX: case TokenKind::KwY: case TokenKind::KwZ:
+        case TokenKind::KwS: case TokenKind::KwT:
+        case TokenKind::KwCX: case TokenKind::KwCZ: case TokenKind::KwCNOT:
+        case TokenKind::KwSWAP:
+        case TokenKind::KwMEASURE:
+        case TokenKind::KwRESET:
             return parse_gate_stmt(out);
-        default: // TODO: handle other types of statements
-            error("Unsopported statement (expected let or gate stmt)");
+        default:
+            error("Unsopported statement");
             return false;
     }
 }
@@ -98,7 +117,7 @@ bool Parser::parse_reg_type_size(size_t& outSize, bool& isQReg) { // parse a reg
     return true;
 }
 
-bool Parser::parse_let_reg(Stmt& out) { // parse a let statement - only allows registers so far (TODO: handle non registers) (let name: qreg<size>; or let name: breg<size>)
+bool Parser::parse_let_reg(Stmt& out) { // parse a let statement for registers only
     expect(TokenKind::KwLet, "Expected let");
 
     if (!expect(TokenKind::Identifier, "Expected identifier after let")) return false;
@@ -119,7 +138,56 @@ bool Parser::parse_let_reg(Stmt& out) { // parse a let statement - only allows r
     return true;
 }
 
-bool Parser::parse_operand(Operand& out) { // parse an operand (identifier[index]) - doesn't support other operands yet (TODO: support more operands)
+bool Parser::parse_let_scalar(Stmt& out) { // parse a scalar declaration
+    expect(TokenKind::KwLet, "Expected let");
+
+    if (!expect(TokenKind::Identifier, "Expected identifier after let")) return false;
+    String name = t[i-1].lexeme;
+
+    if (!expect(TokenKind::Colon, "Expected ':' after let name")) return false;
+
+    ScalarType ty;
+    if (match(TokenKind::KwInt)) ty = ScalarType::Int;
+    else if (match(TokenKind::KwBool)) ty = ScalarType::Bool;
+    else { error("Expected int or bool type"); return false; }
+
+    if (!expect(TokenKind::Assign, "Expected '=' in scalar let")) return false;
+
+    Expr* init = parse_expr();
+    if (!init) return false;
+
+    if (!expect(TokenKind::Semicolon, "Expected ';' after scalar let")) return false;
+
+    out.kind = Stmt::Kind::LetScalar;
+    out.letscalar.type = ty;
+    out.letscalar.name = name;
+    out.letscalar.init = init;
+    return true;
+}
+
+bool Parser::parse_if(Stmt& out) { // parse an if statement
+    expect(TokenKind::KwIf, "Expected if");
+
+    if (!expect(TokenKind::LParen, "Expected '(' after if")) return false;
+    Expr* cond = parse_expr();
+    if (!cond) return false;
+    if (!expect(TokenKind::RParen, "Expected ')' after if condition")) return false;
+
+    IfStmt is;
+    is.cond = cond;
+
+    if (!parse_block(*current_fn, is.then_body)) return false;
+
+    if (match(TokenKind::KwElse)) {
+        if (!parse_block(*current_fn, is.else_body)) return false;
+    }
+
+    out.kind = Stmt::Kind::If;
+    out.ifs = is;
+    return true;
+}
+
+bool Parser::parse_operand(Operand& out) { // parse an operand (identifier[index])
     if (!expect(TokenKind::Identifier, "Expected operand base identifier")) return false;
     out.base = t[i-1].lexeme;
     
@@ -154,7 +222,6 @@ bool Parser::parse_gate_stmt(Stmt& out) { // parse a gate statement ( gate[int][
     GateStmt gs;
     gs.kind = gk;
 
-    // Parse operands until ';'
     while (!at(TokenKind::Semicolon)) {
         Operand op;
         if (!parse_operand(op)) return false;
@@ -165,4 +232,121 @@ bool Parser::parse_gate_stmt(Stmt& out) { // parse a gate statement ( gate[int][
     out.kind = Stmt::Kind::Gate;
     out.gate = gs;
     return true;
+}
+
+// expressions for precedence stuff
+Expr* Parser::parse_expr() {
+    return parse_comparison();
+}
+
+Expr* Parser::parse_comparison() {
+    Expr* left = parse_term();
+    if (!left) return nullptr;
+
+    while (true) {
+        ExprKind k;
+        if (match(TokenKind::EqEq)) k = ExprKind::Eq;
+        else if (match(TokenKind::NotEq)) k = ExprKind::Ne;
+        else if (match(TokenKind::Lt)) k = ExprKind::Lt;
+        else if (match(TokenKind::LtEq)) k = ExprKind::Le;
+        else if (match(TokenKind::Gt)) k = ExprKind::Gt;
+        else if (match(TokenKind::GtEq)) k = ExprKind::Ge;
+        else break;
+
+        Expr* right = parse_term();
+        if (!right) return nullptr;
+
+        Expr* e = current_fn->arena.make();
+        e->kind = k;
+        e->left = left;
+        e->right = right;
+        left = e;
+    }
+
+    return left;
+}
+
+Expr* Parser::parse_term() {
+    Expr* left = parse_factor();
+    if (!left) return nullptr;
+
+    while (true) {
+        ExprKind k;
+        if (match(TokenKind::Plus)) k = ExprKind::Add;
+        else if (match(TokenKind::Minus)) k = ExprKind::Sub;
+        else break;
+
+        Expr* right = parse_factor();
+        if (!right) return nullptr;
+
+        Expr* e = current_fn->arena.make();
+        e->kind = k;
+        e->left = left;
+        e->right = right;
+        left = e;
+    }
+
+    return left;
+}
+
+Expr* Parser::parse_factor() {
+    Expr* left = parse_primary();
+    if (!left) return nullptr;
+
+    while (true) {
+        ExprKind k;
+        if (match(TokenKind::Star)) k = ExprKind::Mul;
+        else if (match(TokenKind::Slash)) k = ExprKind::Div;
+        else break;
+
+        Expr* right = parse_primary();
+        if (!right) return nullptr;
+
+        Expr* e = current_fn->arena.make();
+        e->kind = k;
+        e->left = left;
+        e->right = right;
+        left = e;
+    }
+
+    return left;
+}
+
+Expr* Parser::parse_primary() {
+    if (match(TokenKind::Number)) {
+        Expr* e = current_fn->arena.make();
+        e->kind = ExprKind::IntLit;
+        e->int_value = std::strtoll(t[i-1].lexeme.c_str(), nullptr, 10);
+        return e;
+    }
+
+    if (match(TokenKind::KwTrue)) {
+        Expr* e = current_fn->arena.make();
+        e->kind = ExprKind::BoolLit;
+        e->bool_value = true;
+        return e;
+    }
+
+    if (match(TokenKind::KwFalse)) {
+        Expr* e = current_fn->arena.make();
+        e->kind = ExprKind::BoolLit;
+        e->bool_value = false;
+        return e;
+    }
+
+    if (match(TokenKind::Identifier)) {
+        Expr* e = current_fn->arena.make();
+        e->kind = ExprKind::Var;
+        e->var_name = t[i-1].lexeme;
+        return e;
+    }
+
+    if (match(TokenKind::LParen)) {
+        Expr* e = parse_expr();
+        if (!expect(TokenKind::RParen, "Expected ')'")) return nullptr;
+        return e;
+    }
+
+    error("Expected expression");
+    return nullptr;
 }

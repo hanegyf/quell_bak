@@ -14,16 +14,26 @@ enum class TokenKind {
     KwFunc,
     KwLet,
 
+    // Classical control
+    KwIf,
+    KwElse,
+    KwTrue,
+    KwFalse,
+
     // type Keywords
     KwVoid,
     KwQreg,
     KwBreg,
 
+    // Classical primitive types
+    KwInt,
+    KwBool,
+
     // gate keywords (reserved)
     KwH, KwX, KwY, KwZ, KwS, KwT,
     KwCX, KwCZ, KwCNOT, KwSWAP, // both CX and CNOT valid
     KwMEASURE, KwRESET,
-    
+
     // Punctuation
     LParen, RParen,
     LBrace, RBrace,
@@ -33,6 +43,18 @@ enum class TokenKind {
     // other stuff
     Arrow, // ->
     Lt, Gt, // < >
+    
+    // Operators and punctuation, ig (i don't know what to call it)
+    Assign,     // =
+    Plus,       // +
+    Minus,      // -
+    Star,       // *
+    Slash,      // /
+
+    EqEq,       // ==
+    NotEq,      // !=
+    LtEq,       // <=
+    GtEq        // >=
 };
 
 struct Span { // tells length of a token

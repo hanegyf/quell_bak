@@ -65,9 +65,19 @@ TokenKind Lexer::keyword_kind(const String& s) const { // convert string to Toke
   if (s == "func") return TokenKind::KwFunc;
   if (s == "let") return TokenKind::KwLet;
 
+  // New classical stuff - if/else and booleans
+  if (s == "if") return TokenKind::KwIf;
+  if (s == "else") return TokenKind::KwElse;
+  if (s == "true") return TokenKind::KwTrue;
+  if (s == "false") return TokenKind::KwFalse;
+
   if (s == "void") return TokenKind::KwVoid;
   if (s == "qreg") return TokenKind::KwQreg;
   if (s == "breg") return TokenKind::KwBreg;
+
+  // More new classical stuff - primitive types
+  if (s == "int") return TokenKind::KwInt;
+  if (s == "bool") return TokenKind::KwBool;
 
   // gates
   if (s == "H") return TokenKind::KwH;
@@ -118,7 +128,13 @@ LexResult Lexer::lex() { // lex through the entire file
         
         if (c == '-' && peek(1) == '>') { get(); get(); out.tokens.push_back(make(TokenKind::Arrow,  begin, pos, "->")); continue; } // if an arrow sign
 
-        switch (c) { // if punctuation
+        // New 2 character operators
+        if (c == '=' && peek(1) == '=') { get(); get(); out.tokens.push_back(make(TokenKind::EqEq, begin, pos, "==")); continue; }
+        if (c == '!' && peek(1) == '=') { get(); get(); out.tokens.push_back(make(TokenKind::NotEq, begin, pos, "!=")); continue; }
+        if (c == '<' && peek(1) == '=') { get(); get(); out.tokens.push_back(make(TokenKind::LtEq, begin, pos, "<=")); continue; }
+        if (c == '>' && peek(1) == '=') { get(); get(); out.tokens.push_back(make(TokenKind::GtEq, begin, pos, ">=")); continue; }
+
+        switch (c) { // if punctuation / operators
             case '(': get(); out.tokens.push_back(make(TokenKind::LParen, begin, pos, "(")); continue;
             case ')': get(); out.tokens.push_back(make(TokenKind::RParen, begin, pos, ")")); continue;
             case '{': get(); out.tokens.push_back(make(TokenKind::LBrace, begin, pos, "{")); continue;
@@ -130,6 +146,14 @@ LexResult Lexer::lex() { // lex through the entire file
             case ';': get(); out.tokens.push_back(make(TokenKind::Semicolon, begin, pos, ";")); continue;
             case '<': get(); out.tokens.push_back(make(TokenKind::Lt, begin, pos, "<")); continue;
             case '>': get(); out.tokens.push_back(make(TokenKind::Gt, begin, pos, ">")); continue;
+
+            // New single character ops
+            case '=': get(); out.tokens.push_back(make(TokenKind::Assign, begin, pos, "=")); continue;
+            case '+': get(); out.tokens.push_back(make(TokenKind::Plus, begin, pos, "+")); continue;
+            case '-': get(); out.tokens.push_back(make(TokenKind::Minus, begin, pos, "-")); continue;
+            case '*': get(); out.tokens.push_back(make(TokenKind::Star, begin, pos, "*")); continue;
+            case '/': get(); out.tokens.push_back(make(TokenKind::Slash, begin, pos, "/")); continue;
+
             default:
                 out.ok = false;
                 out.errors.push_back(String("Unexpected characer in lexer"));

@@ -1,6 +1,8 @@
 #include "Lower.hpp"
 #include "QEmitter.hpp" // for make_gate1/make_gate2
 #include <cstddef>
+#include <cstdio>
+#include <cstdlib>
 
 struct QRegInfo {
   size_t base = 0;
@@ -12,9 +14,38 @@ struct BRegInfo {
   size_t size = 0;
 };
 
+struct ScalarInfo { // for primitive types not register
+  ScalarType type;
+  size_t reg; // classical register index
+};
+
 static void push_err(LowerResult& r, const char* msg) {
   r.ok = false;
   r.errors.push_back(String(msg));
+}
+
+static String fmt3(const char* op, size_t a, size_t b, size_t c) {
+  char buf[128];
+  std::snprintf(buf, sizeof(buf), "%s %zu %zu %zu", op, a, b, c);
+  return String(buf);
+}
+
+static String fmt2i(const char* op, size_t a, long long imm) {
+  char buf[128];
+  std::snprintf(buf, sizeof(buf), "%s %zu %lld", op, a, imm);
+  return String(buf);
+}
+
+static String fmt2(const char* op, size_t a, size_t b) {
+  char buf[128];
+  std::snprintf(buf, sizeof(buf), "%s %zu %zu", op, a, b);
+  return String(buf);
+}
+
+static String fmt1i(const char* op, long long imm) {
+  char buf[128];
+  std::snprintf(buf, sizeof(buf), "%s %lld", op, imm);
+  return String(buf);
 }
 
 static const Function* find_main(const Program& p) { // find any functions named main as an entry point
@@ -61,80 +92,148 @@ static void emit_gate2(LowerResult& r, const char* name, size_t a, size_t b) { /
   r.instr_lines.push_back(QEmitter::make_gate2(name, a, b));
 }
 
-LowerResult lower_to_q(const Program& p) { // lower fully down to .q format
-  LowerResult r;
+static void emit_classical(LowerResult& r, const String& line) {
+  r.instr_lines.push_back(line);
+}
 
-  const Function* main_fn = find_main(p); // main function
-  if (!main_fn) {
-    push_err(r, "No entry function func main() -> void found"); // error, fail bc no main function to run
-    return r;
+// expression lowering, returns the classical register index containing the expression result
+static size_t lower_expr(LowerResult& r,
+                         const Expr* e,
+                         HashTable<String, ScalarInfo>& scalars,
+                         size_t& next_temp_reg) {
+  if (!e) { push_err(r, "Null expression"); return 0; }
+
+  // literals
+  if (e->kind == ExprKind::IntLit) {
+    size_t dst = next_temp_reg++;
+    emit_classical(r, fmt2i("MOVI", dst, e->int_value));
+    return dst;
+  }
+  if (e->kind == ExprKind::BoolLit) {
+    size_t dst = next_temp_reg++;
+    emit_classical(r, fmt2i("MOVI", dst, e->bool_value ? 1 : 0));
+    return dst;
+  }
+  if (e->kind == ExprKind::Var) {
+    if (!scalars.contains(e->var_name)) {
+      push_err(r, "Unknown scalar variable");
+      return 0;
+    }
+    return scalars.at(e->var_name).reg;
   }
 
-  // Packed allocation state
-  size_t next_qbase = 0;
-  size_t next_cbase = 0;
+  // binary ops
+  size_t a = lower_expr(r, e->left, scalars, next_temp_reg);
+  size_t b = lower_expr(r, e->right, scalars, next_temp_reg);
+  size_t dst = next_temp_reg++;
 
-  HashTable<String, QRegInfo> qregs;
-  HashTable<String, BRegInfo> bregs;
+  switch (e->kind) {
+    case ExprKind::Add: emit_classical(r, fmt3("ADD", dst, a, b)); break;
+    case ExprKind::Sub: emit_classical(r, fmt3("SUB", dst, a, b)); break;
+    case ExprKind::Mul: emit_classical(r, fmt3("MUL", dst, a, b)); break;
+    case ExprKind::Div: emit_classical(r, fmt3("DIV", dst, a, b)); break;
 
-  // First pass: process let qreg/breg declarations in order, allocate packed bases.
-  for (size_t si = 0; si < main_fn->body.get_size(); ++si) {
-    const Stmt& s = main_fn->body[si];
-    if (s.kind != Stmt::Kind::LetReg) continue;
+    case ExprKind::Eq: emit_classical(r, fmt3("CMPEQ", dst, a, b)); break;
+    case ExprKind::Ne: emit_classical(r, fmt3("CMPNE", dst, a, b)); break;
+    case ExprKind::Lt: emit_classical(r, fmt3("CMPLT", dst, a, b)); break;
+    case ExprKind::Le: emit_classical(r, fmt3("CMPLE", dst, a, b)); break;
+    case ExprKind::Gt: emit_classical(r, fmt3("CMPGT", dst, a, b)); break;
+    case ExprKind::Ge: emit_classical(r, fmt3("CMPGE", dst, a, b)); break;
 
-    const LetRegDecl& d = s.letreg; // register
-    if (d.size == 0) {
-      push_err(r, "Register size must be > 0");
-      return r;
+    default:
+      push_err(r, "Unsupported expression kind in lowering");
+      break;
+  }
+
+  return dst;
+}
+
+static bool lower_stmt_list(LowerResult& r,
+                            const DynamicArray<Stmt>& body,
+                            const HashTable<String, QRegInfo>& qregs,
+                            const HashTable<String, BRegInfo>& bregs,
+                            HashTable<String, ScalarInfo>& scalars,
+                            size_t& next_temp_reg);
+
+// lower a single stmt
+static bool lower_stmt(LowerResult& r,
+                       const Stmt& s,
+                       const HashTable<String, QRegInfo>& qregs,
+                       const HashTable<String, BRegInfo>& bregs,
+                       HashTable<String, ScalarInfo>& scalars,
+                       size_t& next_temp_reg) {
+  if (s.kind == Stmt::Kind::Empty || s.kind == Stmt::Kind::LetReg)
+    return true;
+
+  if (s.kind == Stmt::Kind::LetScalar) {
+    // allocate scalar to a classical reg
+    if (scalars.contains(s.letscalar.name)) {
+      push_err(r, "Duplicate scalar name");
+      return false;
     }
 
-    if (d.kind == LetRegDecl::Kind::QReg) { // qubit register
-      if (qregs.contains(d.name) || bregs.contains(d.name)) {
-        push_err(r, "Duplicate register name");
-        return r;
-      }
-      QRegInfo info;
-      info.base = next_qbase;
-      info.size = d.size;
-      qregs.insert(d.name, info);
-      next_qbase += d.size;
-    } else { // bit register
-      if (qregs.contains(d.name) || bregs.contains(d.name)) {
-        push_err(r, "Duplicate register name");
-        return r;
-      }
-      BRegInfo info;
-      info.base = next_cbase;
-      info.size = d.size;
-      bregs.insert(d.name, info);
-      next_cbase += d.size;
-    }
+    size_t reg = next_temp_reg++; // allocate from temp space, post-bits
+    ScalarInfo info;
+    info.type = s.letscalar.type;
+    info.reg = reg;
+    scalars.insert(s.letscalar.name, info);
+
+    // init
+    size_t val = lower_expr(r, s.letscalar.init, scalars, next_temp_reg);
+    emit_classical(r, fmt2("MOV", reg, val));
+    return r.ok;
   }
 
-  r.num_qubits = next_qbase;
-  r.num_bits = next_cbase;
+  if (s.kind == Stmt::Kind::If) {
+    // cond -> reg
+    size_t cond_reg = lower_expr(r, s.ifs.cond, scalars, next_temp_reg);
 
-  if (r.num_qubits == 0) {
-    push_err(r, "No qreg declared in main; cannot infer QUBITS"); // need to know amount of qubits from having registers
-    return r;
-  }
-  if (r.num_bits == 0) {
-    push_err(r, "No breg declared in main; cannot infer BITS"); // same with bits
-    return r;
-  }
+    // JZ cond <offset_to_else_or_end>
+    // We'll patch offset once we know then-body length.
+    size_t jz_pos = r.instr_lines.get_size();
+    emit_classical(r, String("JZ 0 0")); // placeholder, patched later
 
-  // Second pass: lower gate statements in order.
-  for (size_t si = 0; si < main_fn->body.get_size(); ++si) {
-    const Stmt& s = main_fn->body[si];
+    // then
+    if (!lower_stmt_list(r, s.ifs.then_body, qregs, bregs, scalars, next_temp_reg))
+      return false;
 
-    if (s.kind == Stmt::Kind::Empty || s.kind == Stmt::Kind::LetReg) // ignore already passed
-      continue;
-
-    if (s.kind != Stmt::Kind::Gate) {
-      push_err(r, "Unsupported statement in main (v1 circuit subset)");
-      return r;
+    bool has_else = (s.ifs.else_body.get_size() != 0);
+    size_t jmp_pos = 0;
+    if (has_else) {
+      jmp_pos = r.instr_lines.get_size();
+      emit_classical(r, String("JMP 0")); // placeholder
     }
 
+    // compute jz offset: from jz instruction to else-start (or end)
+    size_t after_then = r.instr_lines.get_size();
+    size_t else_start = after_then;
+
+    if (has_else) {
+      // else starts immediately after JMP placeholder
+      else_start = after_then;
+      if (!lower_stmt_list(r, s.ifs.else_body, qregs, bregs, scalars, next_temp_reg))
+        return false;
+    }
+
+    size_t after_else = r.instr_lines.get_size();
+
+    // patch JZ
+    // pc-relative in backend: pc += imm if condition met
+    // if cond==0, jump to else_start
+    // When executing JZ at pc=jz_pos, offset = (else_start - jz_pos)
+    long long jz_off = static_cast<long long>(else_start) - static_cast<long long>(jz_pos);
+    r.instr_lines[jz_pos] = fmt2i("JZ", cond_reg, jz_off);
+
+    // patch JMP, skip else
+    if (has_else) {
+      long long jmp_off = static_cast<long long>(after_else) - static_cast<long long>(jmp_pos);
+      r.instr_lines[jmp_pos] = fmt1i("JMP", jmp_off);
+    }
+
+    return r.ok;
+  }
+
+  if (s.kind == Stmt::Kind::Gate) {
     const GateStmt& g = s.gate;
 
     auto need_ops = [&](size_t n) -> bool {
@@ -150,9 +249,9 @@ LowerResult lower_to_q(const Program& p) { // lower fully down to .q format
         g.kind == GateStmtKind::Y || g.kind == GateStmtKind::Z ||
         g.kind == GateStmtKind::S || g.kind == GateStmtKind::T) {
 
-      if (!need_ops(1)) return r;
+      if (!need_ops(1)) return false;
       size_t q = 0;
-      if (!resolve_qubit_operand(g.ops[0], qregs, q, r)) return r;
+      if (!resolve_qubit_operand(g.ops[0], qregs, q, r)) return false;
 
       const char* name =
           (g.kind == GateStmtKind::H) ? "H" :
@@ -162,64 +261,154 @@ LowerResult lower_to_q(const Program& p) { // lower fully down to .q format
           (g.kind == GateStmtKind::S) ? "S" : "T";
 
       emit_gate1(r, name, q);
-      continue;
+      return true;
     }
 
     // controlled 2-qubit gates (control first, target second)
     if (g.kind == GateStmtKind::CX || g.kind == GateStmtKind::CNOT || g.kind == GateStmtKind::CZ) {
-      if (!need_ops(2)) return r;
+      if (!need_ops(2)) return false;
 
       size_t qc = 0, qt = 0;
-      if (!resolve_qubit_operand(g.ops[0], qregs, qc, r)) return r;
-      if (!resolve_qubit_operand(g.ops[1], qregs, qt, r)) return r;
+      if (!resolve_qubit_operand(g.ops[0], qregs, qc, r)) return false;
+      if (!resolve_qubit_operand(g.ops[1], qregs, qt, r)) return false;
 
       const char* name = (g.kind == GateStmtKind::CZ) ? "CZ" : "CNOT"; // CX => CNOT
       emit_gate2(r, name, qc, qt);
-      continue;
+      return true;
     }
 
     // SWAP lowered to 3 CNOTs
     if (g.kind == GateStmtKind::SWAP) {
-      if (!need_ops(2)) return r;
+      if (!need_ops(2)) return false;
 
       size_t a = 0, b = 0;
-      if (!resolve_qubit_operand(g.ops[0], qregs, a, r)) return r;
-      if (!resolve_qubit_operand(g.ops[1], qregs, b, r)) return r;
+      if (!resolve_qubit_operand(g.ops[0], qregs, a, r)) return false;
+      if (!resolve_qubit_operand(g.ops[1], qregs, b, r)) return false;
 
-      // CNOT a b; CNOT b a; CNOT a b;
       emit_gate2(r, "CNOT", a, b);
       emit_gate2(r, "CNOT", b, a);
       emit_gate2(r, "CNOT", a, b);
-      continue;
+      return true;
     }
 
     // MEASURE qubit bit
     if (g.kind == GateStmtKind::MEASURE) {
-      if (!need_ops(2)) return r;
+      if (!need_ops(2)) return false;
 
       size_t q = 0, c = 0;
-      if (!resolve_qubit_operand(g.ops[0], qregs, q, r)) return r;
-      if (!resolve_bit_operand(g.ops[1], bregs, c, r)) return r;
+      if (!resolve_qubit_operand(g.ops[0], qregs, q, r)) return false;
+      if (!resolve_bit_operand(g.ops[1], bregs, c, r)) return false;
 
       emit_gate2(r, "MEASURE", q, c);
-      continue;
+      return true;
     }
 
     // RESET qubit => INIT qubit
     if (g.kind == GateStmtKind::RESET) {
-      if (!need_ops(1)) return r;
+      if (!need_ops(1)) return false;
 
       size_t q = 0;
-      if (!resolve_qubit_operand(g.ops[0], qregs, q, r)) return r;
+      if (!resolve_qubit_operand(g.ops[0], qregs, q, r)) return false;
 
       emit_gate1(r, "INIT", q);
-      continue;
+      return true;
     }
 
-    push_err(r, "Unsupported gate in v1 lowering");
+    push_err(r, "Unsupported gate in lowering");
+    return false;
+  }
+
+  push_err(r, "Unsupported statement in lowering");
+  return false;
+}
+
+static bool lower_stmt_list(LowerResult& r,
+                            const DynamicArray<Stmt>& body,
+                            const HashTable<String, QRegInfo>& qregs,
+                            const HashTable<String, BRegInfo>& bregs,
+                            HashTable<String, ScalarInfo>& scalars,
+                            size_t& next_temp_reg) {
+  for (size_t si = 0; si < body.get_size(); ++si) {
+    if (!lower_stmt(r, body[si], qregs, bregs, scalars, next_temp_reg))
+      return false;
+  }
+  return true;
+}
+
+LowerResult lower_to_q(const Program& p) { // lower fully down to .q format
+  LowerResult r;
+
+  const Function* main_fn = find_main(p); // main function
+  if (!main_fn) {
+    push_err(r, "No entry function func main() -> void found");
+    return r;
+  }
+
+  // Packed allocation state
+  size_t next_qbase = 0;
+  size_t next_cbase = 0;
+
+  HashTable<String, QRegInfo> qregs;
+  HashTable<String, BRegInfo> bregs;
+
+  // Scalar symbol table (maps name to classical reg index)
+  HashTable<String, ScalarInfo> scalars;
+
+  // First pass: allocate qregs and bregs
+  for (size_t si = 0; si < main_fn->body.get_size(); ++si) {
+    const Stmt& s = main_fn->body[si];
+    if (s.kind != Stmt::Kind::LetReg) continue;
+
+    const LetRegDecl& d = s.letreg;
+    if (d.size == 0) {
+      push_err(r, "Register size must be > 0");
+      return r;
+    }
+
+    if (d.kind == LetRegDecl::Kind::QReg) {
+      if (qregs.contains(d.name) || bregs.contains(d.name)) {
+        push_err(r, "Duplicate register name");
+        return r;
+      }
+      QRegInfo info;
+      info.base = next_qbase;
+      info.size = d.size;
+      qregs.insert(d.name, info);
+      next_qbase += d.size;
+    } else {
+      if (qregs.contains(d.name) || bregs.contains(d.name)) {
+        push_err(r, "Duplicate register name");
+        return r;
+      }
+      BRegInfo info;
+      info.base = next_cbase;
+      info.size = d.size;
+      bregs.insert(d.name, info);
+      next_cbase += d.size;
+    }
+  }
+
+  r.num_qubits = next_qbase;
+
+  // BITS now represents the size of the backend classical register file, includes breg bits (measurement targets), scalar variables, temporaries used during lowering
+  size_t temp_base = next_cbase;
+  size_t next_temp_reg = temp_base;
+
+  // Second pass: lower all statements (including lets/ifs/gates) into .q lines
+  if (!lower_stmt_list(r, main_fn->body, qregs, bregs, scalars, next_temp_reg))
+    return r;
+
+  // finalize classical reg count
+  r.num_bits = next_temp_reg;
+
+  if (r.num_qubits == 0) {
+    push_err(r, "No qreg declared in main; cannot infer QUBITS");
+    return r;
+  }
+  if (r.num_bits == 0) {
+    push_err(r, "No classical regs allocated; cannot infer BITS");
     return r;
   }
 
   return r;
 }
-
