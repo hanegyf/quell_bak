@@ -9,6 +9,8 @@ CMakeFiles/quell.dir/backend/Backend.cpp.o: /home/squid2010/Projects/quell/backe
   /home/squid2010/Projects/quell/datastructs/HashTable.tpp \
   /home/squid2010/Projects/quell/datastructs/Matrix.hpp \
   /home/squid2010/Projects/quell/datastructs/RNG.hpp \
+  /home/squid2010/Projects/quell/datastructs/Stack.hpp \
+  /home/squid2010/Projects/quell/datastructs/Stack.tpp \
   /home/squid2010/Projects/quell/datastructs/StateVector.hpp \
   /home/squid2010/Projects/quell/datastructs/String.hpp \
   /home/squid2010/Projects/quell/backend/Backend.hpp \
@@ -1093,6 +1095,7 @@ CMakeFiles/quell.dir/compiler/Parser.cpp.o: /home/squid2010/Projects/quell/compi
   /usr/include/bits/pthreadtypes.h \
   /usr/include/bits/select.h \
   /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdio_lim.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -1100,12 +1103,19 @@ CMakeFiles/quell.dir/compiler/Parser.cpp.o: /home/squid2010/Projects/quell/compi
   /usr/include/bits/time64.h \
   /usr/include/bits/timesize.h \
   /usr/include/bits/types.h \
+  /usr/include/bits/types/FILE.h \
+  /usr/include/bits/types/__FILE.h \
+  /usr/include/bits/types/__fpos64_t.h \
+  /usr/include/bits/types/__fpos_t.h \
   /usr/include/bits/types/__locale_t.h \
+  /usr/include/bits/types/__mbstate_t.h \
   /usr/include/bits/types/__sigset_t.h \
   /usr/include/bits/types/clock_t.h \
   /usr/include/bits/types/clockid_t.h \
+  /usr/include/bits/types/cookie_io_functions_t.h \
   /usr/include/bits/types/locale_t.h \
   /usr/include/bits/types/sigset_t.h \
+  /usr/include/bits/types/struct_FILE.h \
   /usr/include/bits/types/struct_timespec.h \
   /usr/include/bits/types/struct_timeval.h \
   /usr/include/bits/types/time_t.h \
@@ -1167,6 +1177,7 @@ CMakeFiles/quell.dir/compiler/Parser.cpp.o: /home/squid2010/Projects/quell/compi
   /usr/include/c++/16.1.1/compare \
   /usr/include/c++/16.1.1/concepts \
   /usr/include/c++/16.1.1/cstddef \
+  /usr/include/c++/16.1.1/cstdio \
   /usr/include/c++/16.1.1/cstdlib \
   /usr/include/c++/16.1.1/debug/assertions.h \
   /usr/include/c++/16.1.1/debug/debug.h \
@@ -1193,10 +1204,12 @@ CMakeFiles/quell.dir/compiler/Parser.cpp.o: /home/squid2010/Projects/quell/compi
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
   /usr/include/stdc-predef.h \
+  /usr/include/stdio.h \
   /usr/include/stdlib.h \
   /usr/include/sys/cdefs.h \
   /usr/include/sys/select.h \
   /usr/include/sys/types.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/stddef.h
 
 CMakeFiles/quell.dir/compiler/QEmitter.cpp.o: /home/squid2010/Projects/quell/compiler/QEmitter.cpp \
@@ -1986,6 +1999,8 @@ CMakeFiles/quell.dir/tools/quell_cli.cpp.o: /home/squid2010/Projects/quell/tools
   /home/squid2010/Projects/quell/datastructs/HashTable.tpp \
   /home/squid2010/Projects/quell/datastructs/Matrix.hpp \
   /home/squid2010/Projects/quell/datastructs/RNG.hpp \
+  /home/squid2010/Projects/quell/datastructs/Stack.hpp \
+  /home/squid2010/Projects/quell/datastructs/Stack.tpp \
   /home/squid2010/Projects/quell/datastructs/StateVector.hpp \
   /home/squid2010/Projects/quell/datastructs/String.hpp \
   /home/squid2010/Projects/quell/backend/Backend.hpp \
@@ -2388,11 +2403,7 @@ CMakeFiles/quell.dir/tools/quell_cli.cpp.o:
 
 /usr/include/gnu/stubs.h:
 
-/usr/include/bits/types/clock_t.h:
-
-CMakeFiles/quell.dir/compiler/Compiler.cpp.o:
-
-/usr/include/bits/types/__fpos_t.h:
+/usr/include/gnu/stubs-64.h:
 
 /usr/include/c++/16.1.1/bits/ios_base.h:
 
@@ -2426,12 +2437,6 @@ CMakeFiles/quell.dir/compiler/Compiler.cpp.o:
 
 /usr/include/c++/16.1.1/bits/stl_bvector.h:
 
-/usr/include/time.h:
-
-/home/squid2010/Projects/quell/datastructs/DynamicArray.tpp:
-
-/usr/include/bits/math-vector.h:
-
 /home/squid2010/Projects/quell/datastructs/HashTable.hpp:
 
 /usr/include/bits/wctype-wchar.h:
@@ -2444,10 +2449,6 @@ CMakeFiles/quell.dir/compiler/Compiler.cpp.o:
 
 /usr/include/bits/timesize.h:
 
-/usr/include/c++/16.1.1/bits/locale_classes.h:
-
-/usr/include/bits/types/struct_tm.h:
-
 /usr/include/bits/types/struct_timespec.h:
 
 /usr/include/c++/16.1.1/bits/requires_hosted.h:
@@ -2455,12 +2456,6 @@ CMakeFiles/quell.dir/compiler/Compiler.cpp.o:
 /usr/include/c++/16.1.1/unordered_map:
 
 /usr/include/bits/waitflags.h:
-
-/usr/lib/libm.so:
-
-/usr/include/c++/16.1.1/bits/locale_classes.tcc:
-
-/usr/include/c++/16.1.1/bits/ostream_print.h:
 
 /home/squid2010/Projects/quell/compiler/Parser.cpp:
 
@@ -2481,6 +2476,16 @@ CMakeFiles/quell.dir/compiler/Compiler.cpp.o:
 /usr/include/bits/types/mbstate_t.h:
 
 /usr/include/bits/types/locale_t.h:
+
+/usr/include/bits/types/clock_t.h:
+
+CMakeFiles/quell.dir/compiler/Compiler.cpp.o:
+
+/usr/include/bits/types/__fpos_t.h:
+
+/usr/include/bits/types/struct_tm.h:
+
+/usr/include/c++/16.1.1/bits/locale_classes.h:
 
 /usr/include/c++/16.1.1/bits/cpp_type_traits.h:
 
@@ -2544,13 +2549,39 @@ CMakeFiles/quell.dir/datastructs/RNG.cpp.o:
 
 /usr/include/bits/fp-logb.h:
 
-/usr/include/bits/mathcalls-macros.h:
+/usr/include/bits/types/struct_FILE.h:
 
-/usr/include/asm-generic/int-ll64.h:
+/usr/include/asm/types.h:
+
+/usr/include/c++/16.1.1/bits/functional_hash.h:
+
+/usr/include/bits/stdint-least.h:
+
+/usr/include/linux/posix_types.h:
+
+/usr/include/bits/types/FILE.h:
+
+/usr/include/bits/flt-eval-method.h:
+
+/home/squid2010/Projects/quell/backend/Instruction.hpp:
+
+/usr/lib/libc.so:
+
+/usr/include/bits/pthreadtypes.h:
+
+/usr/include/alloca.h:
+
+/usr/include/c++/16.1.1/tr1/legendre_function.tcc:
+
+/usr/include/c++/16.1.1/vector:
 
 /usr/include/bits/atomic_wide_counter.h:
 
 /usr/include/c++/16.1.1/pstl/glue_numeric_defs.h:
+
+/usr/include/asm-generic/int-ll64.h:
+
+/usr/include/bits/mathcalls-macros.h:
 
 /usr/include/asm/posix_types_64.h:
 
@@ -2558,19 +2589,23 @@ CMakeFiles/quell.dir/datastructs/RNG.cpp.o:
 
 /usr/include/asm/posix_types.h:
 
-/usr/include/bits/endianness.h:
-
-/usr/include/bits/libm-simd-decl-stubs.h:
-
-/usr/include/c++/16.1.1/bits/stl_construct.h:
-
-/usr/include/c++/16.1.1/bits/version.h:
-
 /usr/include/wctype.h:
 
 /usr/include/sched.h:
 
 /usr/include/bits/fp-fast.h:
+
+/usr/include/time.h:
+
+/home/squid2010/Projects/quell/datastructs/DynamicArray.tpp:
+
+/usr/include/bits/math-vector.h:
+
+/usr/lib/libm.so:
+
+/usr/include/c++/16.1.1/bits/ostream_print.h:
+
+/usr/include/c++/16.1.1/bits/locale_classes.tcc:
 
 /usr/include/bits/floatn-common.h:
 
@@ -2589,6 +2624,12 @@ CMakeFiles/quell.dir/datastructs/RNG.cpp.o:
 /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/crtbeginS.o:
 
 /usr/include/c++/16.1.1/functional:
+
+/home/squid2010/Projects/quell/datastructs/Stack.tpp:
+
+/usr/include/c++/16.1.1/tr1/exp_integral.tcc:
+
+/usr/include/c++/16.1.1/bits/range_access.h:
 
 CMakeFiles/quell.dir/compiler/Lower.cpp.o:
 
@@ -2614,25 +2655,21 @@ CMakeFiles/quell.dir/compiler/Lower.cpp.o:
 
 /usr/include/bits/select.h:
 
+/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/gthr-default.h:
+
+/usr/include/bits/thread-shared-types.h:
+
+/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/basic_file.h:
+
+/usr/include/bits/types/wint_t.h:
+
+/home/squid2010/Projects/quell/backend/Backend.hpp:
+
 /usr/include/c++/16.1.1/bits/localefwd.h:
 
 /usr/include/bits/setjmp.h:
 
 /usr/include/c++/16.1.1/ext/type_traits.h:
-
-/usr/include/linux/posix_types.h:
-
-/usr/include/bits/types/FILE.h:
-
-/usr/include/bits/flt-eval-method.h:
-
-/home/squid2010/Projects/quell/backend/Instruction.hpp:
-
-/usr/lib/libc.so:
-
-/usr/include/bits/pthreadtypes.h:
-
-/usr/include/c++/16.1.1/vector:
 
 /usr/include/c++/16.1.1/bits/fstream.tcc:
 
@@ -2642,17 +2679,13 @@ CMakeFiles/quell.dir/compiler/Lower.cpp.o:
 
 /usr/include/c++/16.1.1/bits/stdexcept_throw.h:
 
-/usr/include/bits/types/struct_FILE.h:
+/usr/include/bits/endianness.h:
 
-/usr/include/asm/types.h:
+/usr/include/bits/libm-simd-decl-stubs.h:
 
-/usr/include/c++/16.1.1/bits/functional_hash.h:
+/usr/include/c++/16.1.1/bits/stl_construct.h:
 
-/usr/include/c++/16.1.1/tr1/legendre_function.tcc:
-
-/usr/include/alloca.h:
-
-/usr/include/bits/stdint-least.h:
+/usr/include/c++/16.1.1/bits/version.h:
 
 /usr/include/c++/16.1.1/bits/concept_check.h:
 
@@ -2682,6 +2715,12 @@ CMakeFiles/quell.dir/compiler/Lower.cpp.o:
 
 /usr/include/bits/libc-header-start.h:
 
+/usr/include/c++/16.1.1/bits/char_traits.h:
+
+/usr/include/bits/types/time_t.h:
+
+/home/squid2010/Projects/quell/datastructs/Stack.hpp:
+
 /usr/include/bits/types/timer_t.h:
 
 /usr/include/c++/16.1.1/bits/std_abs.h:
@@ -2706,6 +2745,12 @@ CMakeFiles/quell.dir/compiler/Lower.cpp.o:
 
 /usr/include/bits/stdint-uintn.h:
 
+/usr/include/features.h:
+
+/usr/include/bits/types/__FILE.h:
+
+/usr/include/bits/sched.h:
+
 /usr/include/c++/16.1.1/bits/cxxabi_init_exception.h:
 
 /usr/include/c++/16.1.1/concepts:
@@ -2721,28 +2766,6 @@ CMakeFiles/quell.dir/compiler/Parser.cpp.o:
 /usr/lib/libatomic_asneeded.so:
 
 /usr/include/bits/types/struct_timeval.h:
-
-/usr/include/features.h:
-
-/usr/include/bits/sched.h:
-
-/usr/include/bits/types/__FILE.h:
-
-/usr/include/c++/16.1.1/bits/range_access.h:
-
-/usr/include/c++/16.1.1/bits/char_traits.h:
-
-/usr/include/bits/types/time_t.h:
-
-/usr/include/bits/types/wint_t.h:
-
-/home/squid2010/Projects/quell/backend/Backend.hpp:
-
-/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/gthr-default.h:
-
-/usr/include/bits/thread-shared-types.h:
-
-/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/basic_file.h:
 
 /usr/include/c++/16.1.1/bits/locale_facets.h:
 
@@ -2934,8 +2957,6 @@ CMakeFiles/quell.dir/backend/Backend.cpp.o:
 
 /usr/include/c++/16.1.1/tr1/beta_function.tcc:
 
-/usr/include/c++/16.1.1/tr1/exp_integral.tcc:
-
 /usr/include/c++/16.1.1/typeinfo:
 
 /usr/include/c++/16.1.1/tr1/poly_laguerre.tcc:
@@ -2969,5 +2990,3 @@ CMakeFiles/quell.dir/backend/Backend.cpp.o:
 /usr/include/errno.h:
 
 /usr/include/features-time64.h:
-
-/usr/include/gnu/stubs-64.h:

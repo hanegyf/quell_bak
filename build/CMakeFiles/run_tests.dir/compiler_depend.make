@@ -9,6 +9,8 @@ CMakeFiles/run_tests.dir/backend/Backend.cpp.o: /home/squid2010/Projects/quell/b
   /home/squid2010/Projects/quell/datastructs/HashTable.tpp \
   /home/squid2010/Projects/quell/datastructs/Matrix.hpp \
   /home/squid2010/Projects/quell/datastructs/RNG.hpp \
+  /home/squid2010/Projects/quell/datastructs/Stack.hpp \
+  /home/squid2010/Projects/quell/datastructs/Stack.tpp \
   /home/squid2010/Projects/quell/datastructs/StateVector.hpp \
   /home/squid2010/Projects/quell/datastructs/String.hpp \
   /home/squid2010/Projects/quell/backend/Backend.hpp \
@@ -166,6 +168,7 @@ CMakeFiles/run_tests.dir/backend/Backend.cpp.o: /home/squid2010/Projects/quell/b
   /usr/include/c++/16.1.1/bits/stl_iterator_base_types.h \
   /usr/include/c++/16.1.1/bits/stl_numeric.h \
   /usr/include/c++/16.1.1/bits/stl_pair.h \
+  /usr/include/c++/16.1.1/bits/stl_relops.h \
   /usr/include/c++/16.1.1/bits/stl_uninitialized.h \
   /usr/include/c++/16.1.1/bits/stl_vector.h \
   /usr/include/c++/16.1.1/bits/streambuf.tcc \
@@ -237,6 +240,7 @@ CMakeFiles/run_tests.dir/backend/Backend.cpp.o: /home/squid2010/Projects/quell/b
   /usr/include/c++/16.1.1/type_traits \
   /usr/include/c++/16.1.1/typeinfo \
   /usr/include/c++/16.1.1/unordered_map \
+  /usr/include/c++/16.1.1/utility \
   /usr/include/c++/16.1.1/vector \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/atomic_word.h \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/basic_file.h \
@@ -429,6 +433,7 @@ CMakeFiles/run_tests.dir/backend/Register.cpp.o: /home/squid2010/Projects/quell/
   /usr/include/c++/16.1.1/bits/stl_iterator_base_types.h \
   /usr/include/c++/16.1.1/bits/stl_numeric.h \
   /usr/include/c++/16.1.1/bits/stl_pair.h \
+  /usr/include/c++/16.1.1/bits/stl_relops.h \
   /usr/include/c++/16.1.1/bits/stl_uninitialized.h \
   /usr/include/c++/16.1.1/bits/stl_vector.h \
   /usr/include/c++/16.1.1/bits/string_view.tcc \
@@ -486,6 +491,7 @@ CMakeFiles/run_tests.dir/backend/Register.cpp.o: /home/squid2010/Projects/quell/
   /usr/include/c++/16.1.1/tuple \
   /usr/include/c++/16.1.1/type_traits \
   /usr/include/c++/16.1.1/typeinfo \
+  /usr/include/c++/16.1.1/utility \
   /usr/include/c++/16.1.1/vector \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/atomic_word.h \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
@@ -677,6 +683,7 @@ CMakeFiles/run_tests.dir/compiler/Compiler.cpp.o: /home/squid2010/Projects/quell
   /usr/include/c++/16.1.1/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/16.1.1/bits/stl_iterator_base_types.h \
   /usr/include/c++/16.1.1/bits/stl_pair.h \
+  /usr/include/c++/16.1.1/bits/stl_relops.h \
   /usr/include/c++/16.1.1/bits/stl_uninitialized.h \
   /usr/include/c++/16.1.1/bits/stl_vector.h \
   /usr/include/c++/16.1.1/bits/streambuf.tcc \
@@ -726,6 +733,7 @@ CMakeFiles/run_tests.dir/compiler/Compiler.cpp.o: /home/squid2010/Projects/quell
   /usr/include/c++/16.1.1/type_traits \
   /usr/include/c++/16.1.1/typeinfo \
   /usr/include/c++/16.1.1/unordered_map \
+  /usr/include/c++/16.1.1/utility \
   /usr/include/c++/16.1.1/vector \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/atomic_word.h \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/basic_file.h \
@@ -850,6 +858,7 @@ CMakeFiles/run_tests.dir/compiler/Lexer.cpp.o: /home/squid2010/Projects/quell/co
   /usr/include/c++/16.1.1/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/16.1.1/bits/stl_iterator_base_types.h \
   /usr/include/c++/16.1.1/bits/stl_pair.h \
+  /usr/include/c++/16.1.1/bits/stl_relops.h \
   /usr/include/c++/16.1.1/bits/stl_uninitialized.h \
   /usr/include/c++/16.1.1/bits/stl_vector.h \
   /usr/include/c++/16.1.1/bits/unordered_map.h \
@@ -877,6 +886,7 @@ CMakeFiles/run_tests.dir/compiler/Lexer.cpp.o: /home/squid2010/Projects/quell/co
   /usr/include/c++/16.1.1/type_traits \
   /usr/include/c++/16.1.1/typeinfo \
   /usr/include/c++/16.1.1/unordered_map \
+  /usr/include/c++/16.1.1/utility \
   /usr/include/c++/16.1.1/vector \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -1009,6 +1019,7 @@ CMakeFiles/run_tests.dir/compiler/Lower.cpp.o: /home/squid2010/Projects/quell/co
   /usr/include/c++/16.1.1/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/16.1.1/bits/stl_iterator_base_types.h \
   /usr/include/c++/16.1.1/bits/stl_pair.h \
+  /usr/include/c++/16.1.1/bits/stl_relops.h \
   /usr/include/c++/16.1.1/bits/stl_uninitialized.h \
   /usr/include/c++/16.1.1/bits/stl_vector.h \
   /usr/include/c++/16.1.1/bits/string_view.tcc \
@@ -1048,6 +1059,7 @@ CMakeFiles/run_tests.dir/compiler/Lower.cpp.o: /home/squid2010/Projects/quell/co
   /usr/include/c++/16.1.1/type_traits \
   /usr/include/c++/16.1.1/typeinfo \
   /usr/include/c++/16.1.1/unordered_map \
+  /usr/include/c++/16.1.1/utility \
   /usr/include/c++/16.1.1/vector \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -1093,6 +1105,7 @@ CMakeFiles/run_tests.dir/compiler/Parser.cpp.o: /home/squid2010/Projects/quell/c
   /usr/include/bits/pthreadtypes.h \
   /usr/include/bits/select.h \
   /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdio_lim.h \
   /usr/include/bits/stdlib-float.h \
   /usr/include/bits/struct_mutex.h \
   /usr/include/bits/struct_rwlock.h \
@@ -1100,12 +1113,19 @@ CMakeFiles/run_tests.dir/compiler/Parser.cpp.o: /home/squid2010/Projects/quell/c
   /usr/include/bits/time64.h \
   /usr/include/bits/timesize.h \
   /usr/include/bits/types.h \
+  /usr/include/bits/types/FILE.h \
+  /usr/include/bits/types/__FILE.h \
+  /usr/include/bits/types/__fpos64_t.h \
+  /usr/include/bits/types/__fpos_t.h \
   /usr/include/bits/types/__locale_t.h \
+  /usr/include/bits/types/__mbstate_t.h \
   /usr/include/bits/types/__sigset_t.h \
   /usr/include/bits/types/clock_t.h \
   /usr/include/bits/types/clockid_t.h \
+  /usr/include/bits/types/cookie_io_functions_t.h \
   /usr/include/bits/types/locale_t.h \
   /usr/include/bits/types/sigset_t.h \
+  /usr/include/bits/types/struct_FILE.h \
   /usr/include/bits/types/struct_timespec.h \
   /usr/include/bits/types/struct_timeval.h \
   /usr/include/bits/types/time_t.h \
@@ -1156,6 +1176,7 @@ CMakeFiles/run_tests.dir/compiler/Parser.cpp.o: /home/squid2010/Projects/quell/c
   /usr/include/c++/16.1.1/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/16.1.1/bits/stl_iterator_base_types.h \
   /usr/include/c++/16.1.1/bits/stl_pair.h \
+  /usr/include/c++/16.1.1/bits/stl_relops.h \
   /usr/include/c++/16.1.1/bits/stl_uninitialized.h \
   /usr/include/c++/16.1.1/bits/stl_vector.h \
   /usr/include/c++/16.1.1/bits/unordered_map.h \
@@ -1167,6 +1188,7 @@ CMakeFiles/run_tests.dir/compiler/Parser.cpp.o: /home/squid2010/Projects/quell/c
   /usr/include/c++/16.1.1/compare \
   /usr/include/c++/16.1.1/concepts \
   /usr/include/c++/16.1.1/cstddef \
+  /usr/include/c++/16.1.1/cstdio \
   /usr/include/c++/16.1.1/cstdlib \
   /usr/include/c++/16.1.1/debug/assertions.h \
   /usr/include/c++/16.1.1/debug/debug.h \
@@ -1182,6 +1204,7 @@ CMakeFiles/run_tests.dir/compiler/Parser.cpp.o: /home/squid2010/Projects/quell/c
   /usr/include/c++/16.1.1/type_traits \
   /usr/include/c++/16.1.1/typeinfo \
   /usr/include/c++/16.1.1/unordered_map \
+  /usr/include/c++/16.1.1/utility \
   /usr/include/c++/16.1.1/vector \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
   /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -1193,10 +1216,12 @@ CMakeFiles/run_tests.dir/compiler/Parser.cpp.o: /home/squid2010/Projects/quell/c
   /usr/include/gnu/stubs-64.h \
   /usr/include/gnu/stubs.h \
   /usr/include/stdc-predef.h \
+  /usr/include/stdio.h \
   /usr/include/stdlib.h \
   /usr/include/sys/cdefs.h \
   /usr/include/sys/select.h \
   /usr/include/sys/types.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/stddef.h
 
 CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.o: /home/squid2010/Projects/quell/compiler/QEmitter.cpp \
@@ -2007,6 +2032,8 @@ CMakeFiles/run_tests.dir/tests/test_backend.cpp.o: /home/squid2010/Projects/quel
   /home/squid2010/Projects/quell/datastructs/HashTable.tpp \
   /home/squid2010/Projects/quell/datastructs/Matrix.hpp \
   /home/squid2010/Projects/quell/datastructs/RNG.hpp \
+  /home/squid2010/Projects/quell/datastructs/Stack.hpp \
+  /home/squid2010/Projects/quell/datastructs/Stack.tpp \
   /home/squid2010/Projects/quell/datastructs/StateVector.hpp \
   /home/squid2010/Projects/quell/datastructs/String.hpp \
   /home/squid2010/Projects/quell/backend/Backend.hpp \
@@ -5789,8 +5816,6 @@ CMakeFiles/run_tests.dir/datastructs/StateVector.cpp.o:
 
 /home/squid2010/Projects/quell/tests/test_statevector.cpp:
 
-/home/squid2010/Projects/quell/datastructs/Stack.tpp:
-
 /home/squid2010/Projects/quell/tests/test_stack.cpp:
 
 /home/squid2010/Projects/quell/tests/test_matrix.cpp:
@@ -5838,8 +5863,6 @@ CMakeFiles/run_tests.dir/tests/test_compiler.cpp.o:
 /usr/lib/crtn.o:
 
 /usr/include/c++/16.1.1/bits/stl_tree.h:
-
-/usr/include/c++/16.1.1/bits/stl_relops.h:
 
 /usr/include/c++/16.1.1/bits/stl_raw_storage_iter.h:
 
@@ -5989,12 +6012,6 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/pthread.h:
 
-/usr/lib/libstdc++.so:
-
-/usr/include/c++/16.1.1/utility:
-
-/usr/include/locale.h:
-
 /home/squid2010/Projects/quell/datastructs/StateVector.cpp:
 
 /usr/include/linux/types.h:
@@ -6005,11 +6022,17 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/gnu/stubs.h:
 
-/usr/include/bits/types/clock_t.h:
+/usr/include/bits/types/__sigval_t.h:
 
-/usr/include/bits/types/sig_atomic_t.h:
+/usr/include/gnu/stubs-64.h:
 
-/usr/include/bits/types/__fpos_t.h:
+/usr/include/features-time64.h:
+
+/home/squid2010/Projects/quell/tests/test_register.cpp:
+
+/usr/include/bits/getopt_posix.h:
+
+/usr/include/errno.h:
 
 /usr/include/bits/statx-generic.h:
 
@@ -6049,16 +6072,6 @@ _deps/googletest-src/googletest/include/gtest/gtest-test-part.h:
 
 /usr/include/c++/16.1.1/bits/stl_bvector.h:
 
-/usr/include/c++/16.1.1/cxxabi.h:
-
-/usr/include/time.h:
-
-/home/squid2010/Projects/quell/datastructs/DynamicArray.tpp:
-
-/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/messages_members.h:
-
-/usr/include/bits/math-vector.h:
-
 /home/squid2010/Projects/quell/datastructs/HashTable.hpp:
 
 /usr/include/bits/wctype-wchar.h:
@@ -6073,10 +6086,6 @@ _deps/googletest-src/googletest/include/gtest/gtest-test-part.h:
 
 /usr/include/bits/timesize.h:
 
-/usr/include/c++/16.1.1/bits/locale_classes.h:
-
-/usr/include/bits/types/struct_tm.h:
-
 /usr/include/bits/types/struct_timespec.h:
 
 /usr/include/c++/16.1.1/bits/requires_hosted.h:
@@ -6086,12 +6095,6 @@ CMakeFiles/run_tests.dir/tests/test_complex.cpp.o:
 /usr/include/c++/16.1.1/unordered_map:
 
 /usr/include/bits/waitflags.h:
-
-/usr/lib/libm.so:
-
-/usr/include/c++/16.1.1/bits/locale_classes.tcc:
-
-/usr/include/c++/16.1.1/bits/ostream_print.h:
 
 /home/squid2010/Projects/quell/compiler/Parser.cpp:
 
@@ -6118,6 +6121,16 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-internal.h:
 /usr/include/bits/types/mbstate_t.h:
 
 /usr/include/bits/types/locale_t.h:
+
+/usr/include/bits/types/clock_t.h:
+
+/usr/include/bits/types/sig_atomic_t.h:
+
+/usr/include/bits/types/__fpos_t.h:
+
+/usr/include/bits/types/struct_tm.h:
+
+/usr/include/c++/16.1.1/bits/locale_classes.h:
 
 /usr/include/c++/16.1.1/bits/cpp_type_traits.h:
 
@@ -6191,15 +6204,49 @@ CMakeFiles/run_tests.dir/datastructs/Matrix.cpp.o:
 
 /usr/include/bits/fp-logb.h:
 
-/usr/include/c++/16.1.1/condition_variable:
+/usr/include/bits/environments.h:
 
-/usr/include/bits/mathcalls-macros.h:
+/usr/include/bits/types/struct_FILE.h:
 
-/usr/include/asm-generic/int-ll64.h:
+/usr/include/asm/types.h:
+
+/usr/include/c++/16.1.1/bits/functional_hash.h:
+
+/usr/include/c++/16.1.1/bits/stl_set.h:
+
+/usr/include/bits/stdint-least.h:
+
+/usr/include/linux/posix_types.h:
+
+/usr/include/bits/types/FILE.h:
+
+/usr/include/bits/flt-eval-method.h:
+
+/home/squid2010/Projects/quell/backend/Instruction.hpp:
+
+/usr/lib/libc.so:
+
+/usr/include/bits/pthreadtypes.h:
+
+/usr/include/c++/16.1.1/set:
+
+/usr/include/alloca.h:
+
+/usr/include/c++/16.1.1/tr1/legendre_function.tcc:
+
+_deps/googletest-src/googletest/include/gtest/internal/gtest-filepath.h:
+
+/usr/include/c++/16.1.1/vector:
 
 /usr/include/bits/atomic_wide_counter.h:
 
 /usr/include/c++/16.1.1/pstl/glue_numeric_defs.h:
+
+/usr/include/asm-generic/int-ll64.h:
+
+/usr/include/c++/16.1.1/condition_variable:
+
+/usr/include/bits/mathcalls-macros.h:
 
 /usr/include/asm/posix_types_64.h:
 
@@ -6207,25 +6254,27 @@ CMakeFiles/run_tests.dir/datastructs/Matrix.cpp.o:
 
 /usr/include/asm/posix_types.h:
 
-/usr/include/libintl.h:
-
-/usr/include/c++/16.1.1/bits/locale_facets_nonio.h:
-
-/usr/include/bits/endianness.h:
-
-/usr/include/bits/libm-simd-decl-stubs.h:
-
-/usr/include/c++/16.1.1/bits/stl_construct.h:
-
-CMakeFiles/run_tests.dir/tests/test_register.cpp.o:
-
-/usr/include/c++/16.1.1/bits/version.h:
-
 /usr/include/wctype.h:
 
 /usr/include/sched.h:
 
 /usr/include/bits/fp-fast.h:
+
+/usr/include/c++/16.1.1/cxxabi.h:
+
+/usr/include/time.h:
+
+/home/squid2010/Projects/quell/datastructs/DynamicArray.tpp:
+
+/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/messages_members.h:
+
+/usr/include/bits/math-vector.h:
+
+/usr/lib/libm.so:
+
+/usr/include/c++/16.1.1/bits/ostream_print.h:
+
+/usr/include/c++/16.1.1/bits/locale_classes.tcc:
 
 /usr/include/bits/floatn-common.h:
 
@@ -6250,6 +6299,12 @@ _deps/googletest-src/googletest/include/gtest/gtest-message.h:
 /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/crtbeginS.o:
 
 /usr/include/c++/16.1.1/functional:
+
+/home/squid2010/Projects/quell/datastructs/Stack.tpp:
+
+/usr/include/c++/16.1.1/tr1/exp_integral.tcc:
+
+/usr/include/c++/16.1.1/bits/range_access.h:
 
 /usr/include/asm/bitsperlong.h:
 
@@ -6279,27 +6334,27 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port.h:
 
 /usr/include/bits/select.h:
 
+/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/gthr-default.h:
+
+/usr/include/bits/thread-shared-types.h:
+
+CMakeFiles/run_tests.dir/tests/test_dynamic_array.cpp.o:
+
+/usr/include/c++/16.1.1/bits/stl_tempbuf.h:
+
+/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/basic_file.h:
+
+CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.o:
+
+/usr/include/bits/types/wint_t.h:
+
+/home/squid2010/Projects/quell/backend/Backend.hpp:
+
 /usr/include/c++/16.1.1/bits/localefwd.h:
 
 /usr/include/bits/setjmp.h:
 
 /usr/include/c++/16.1.1/ext/type_traits.h:
-
-/usr/include/linux/posix_types.h:
-
-/usr/include/bits/types/FILE.h:
-
-/usr/include/bits/flt-eval-method.h:
-
-/home/squid2010/Projects/quell/backend/Instruction.hpp:
-
-/usr/lib/libc.so:
-
-/usr/include/bits/pthreadtypes.h:
-
-_deps/googletest-src/googletest/include/gtest/internal/gtest-filepath.h:
-
-/usr/include/c++/16.1.1/vector:
 
 /usr/include/c++/16.1.1/bits/fstream.tcc:
 
@@ -6309,23 +6364,19 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-filepath.h:
 
 /usr/include/c++/16.1.1/bits/stdexcept_throw.h:
 
-/usr/include/bits/environments.h:
+/usr/include/libintl.h:
 
-/usr/include/bits/types/struct_FILE.h:
+/usr/include/c++/16.1.1/bits/locale_facets_nonio.h:
 
-/usr/include/asm/types.h:
+/usr/include/bits/endianness.h:
 
-/usr/include/c++/16.1.1/bits/functional_hash.h:
+/usr/include/bits/libm-simd-decl-stubs.h:
 
-/usr/include/c++/16.1.1/set:
+/usr/include/c++/16.1.1/bits/stl_construct.h:
 
-/usr/include/c++/16.1.1/tr1/legendre_function.tcc:
+CMakeFiles/run_tests.dir/tests/test_register.cpp.o:
 
-/usr/include/alloca.h:
-
-/usr/include/c++/16.1.1/bits/stl_set.h:
-
-/usr/include/bits/stdint-least.h:
+/usr/include/c++/16.1.1/bits/version.h:
 
 /usr/include/c++/16.1.1/bits/concept_check.h:
 
@@ -6365,6 +6416,10 @@ _deps/googletest-src/googletest/include/gtest/internal/custom/gtest-port.h:
 
 /usr/include/bits/libc-header-start.h:
 
+/usr/include/c++/16.1.1/bits/char_traits.h:
+
+/usr/include/bits/types/time_t.h:
+
 /home/squid2010/Projects/quell/datastructs/Stack.hpp:
 
 /usr/include/bits/types/timer_t.h:
@@ -6399,6 +6454,12 @@ _deps/googletest-src/googletest/include/gtest/internal/custom/gtest-port.h:
 
 /usr/include/bits/stdint-uintn.h:
 
+/usr/include/features.h:
+
+/usr/include/bits/types/__FILE.h:
+
+/usr/include/bits/sched.h:
+
 /usr/include/c++/16.1.1/bits/cxxabi_init_exception.h:
 
 /usr/include/c++/16.1.1/concepts:
@@ -6412,34 +6473,6 @@ _deps/googletest-src/googletest/include/gtest/internal/custom/gtest-port.h:
 /usr/lib/libatomic_asneeded.so:
 
 /usr/include/bits/types/struct_timeval.h:
-
-/usr/include/features.h:
-
-/usr/include/bits/sched.h:
-
-/usr/include/bits/types/__FILE.h:
-
-/usr/include/c++/16.1.1/bits/range_access.h:
-
-/usr/include/c++/16.1.1/bits/char_traits.h:
-
-/usr/include/bits/types/time_t.h:
-
-CMakeFiles/run_tests.dir/compiler/QEmitter.cpp.o:
-
-/usr/include/bits/types/wint_t.h:
-
-/home/squid2010/Projects/quell/backend/Backend.hpp:
-
-/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/gthr-default.h:
-
-/usr/include/bits/thread-shared-types.h:
-
-CMakeFiles/run_tests.dir/tests/test_dynamic_array.cpp.o:
-
-/usr/include/c++/16.1.1/bits/stl_tempbuf.h:
-
-/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/basic_file.h:
 
 /usr/include/c++/16.1.1/bits/locale_facets.h:
 
@@ -6526,6 +6559,12 @@ CMakeFiles/run_tests.dir/tests/test_dynamic_array.cpp.o:
 /usr/include/c++/16.1.1/cstdlib:
 
 /usr/include/c++/16.1.1/bits/stl_pair.h:
+
+/usr/include/c++/16.1.1/bits/stl_relops.h:
+
+/usr/include/bits/sigstksz.h:
+
+/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/c++config.h:
 
 /usr/include/c++/16.1.1/bits/stl_uninitialized.h:
 
@@ -6645,8 +6684,6 @@ CMakeFiles/run_tests.dir/compiler/Lexer.cpp.o:
 
 /usr/include/c++/16.1.1/tr1/beta_function.tcc:
 
-/usr/include/c++/16.1.1/tr1/exp_integral.tcc:
-
 /usr/include/bits/sigstack.h:
 
 /usr/include/c++/16.1.1/typeinfo:
@@ -6657,13 +6694,15 @@ CMakeFiles/run_tests.dir/compiler/Lexer.cpp.o:
 
 /usr/include/c++/16.1.1/tuple:
 
+/usr/lib/libstdc++.so:
+
+/usr/include/locale.h:
+
+/usr/include/c++/16.1.1/utility:
+
 /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/atomic_word.h:
 
 /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/c++allocator.h:
-
-/usr/include/bits/sigstksz.h:
-
-/usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/c++config.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/float.h:
 
@@ -6684,15 +6723,3 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-string.h:
 /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/error_constants.h:
 
 /usr/include/c++/16.1.1/x86_64-pc-linux-gnu/bits/os_defines.h:
-
-/home/squid2010/Projects/quell/tests/test_register.cpp:
-
-/usr/include/bits/getopt_posix.h:
-
-/usr/include/errno.h:
-
-/usr/include/features-time64.h:
-
-/usr/include/bits/types/__sigval_t.h:
-
-/usr/include/gnu/stubs-64.h:

@@ -34,7 +34,7 @@ ParseResult Parser::parse_program() { // parse the entire program
             r.ok = false;
             return r;
         }
-        r.program.functions.push_back(fn);
+        r.program.functions.push_back(std::move(fn));
     }
 
     r.ok = ok;
@@ -122,10 +122,12 @@ bool Parser::parse_stmt(Stmt& out) { // parse an individual statement
     }
 
     if (at(TokenKind::KwLet)) {
-        size_t save = i;
-        Stmt tmp;
-        if (parse_let_reg(tmp)) { out = tmp; return true; }
-        i = save;
+        // Peek at the type keyword (let NAME : TYPE ...) to avoid
+        // speculative backtracking that corrupts ok/errors state.
+        if (i + 3 < t.get_size() &&
+            (t[i+3].kind == TokenKind::KwQreg || t[i+3].kind == TokenKind::KwBreg)) {
+            return parse_let_reg(out);
+        }
         return parse_let_scalar(out);
     }
 

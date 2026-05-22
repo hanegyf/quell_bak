@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/squid2010/Projects/quell/datastructs
 
-CXX_FLAGS = -std=c++17
+CXX_FLAGS = -g -std=c++17
 

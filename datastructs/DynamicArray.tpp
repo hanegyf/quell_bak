@@ -1,33 +1,38 @@
+#include <utility> // for std::move
 // Constructors
 template <typename T> DynamicArray<T>::DynamicArray() { // default constructor
   size = 0;
-  capacity = 1;
-  data = new T[capacity];
+  capacity = 0;
+  data = nullptr;
 }
 
 template <typename T> DynamicArray<T>::~DynamicArray() { // destructor
-  delete[] data;
+  for (size_t i = 0; i < size; i++)
+    data[i].~T(); // explicitly destroy live elements
+  ::operator delete(data); // free raw memory (safe if nullptr)
 }
 
 template <typename T>
 DynamicArray<T>::DynamicArray(const DynamicArray &other) { // copy constructor
   size = other.size;
-  capacity = other.capacity;
+  capacity = other.size; // only allocate what's needed
 
-  data = new T[capacity];
+  if (capacity == 0) {
+      data = nullptr;
+      return;
+  }
 
+  data = static_cast<T*>(::operator new(capacity * sizeof(T)));
   for (size_t i = 0; i < size; i++) {
-    data[i] = other.data[i];
+    new (&data[i]) T(other.data[i]); // copy-construct each element
   }
 }
 
 template <typename T>
-DynamicArray<T>::DynamicArray(
-    DynamicArray &&other) noexcept { // move constructor
+DynamicArray<T>::DynamicArray(DynamicArray&& other) noexcept { // move constructor
   data = other.data;
   size = other.size;
   capacity = other.capacity;
-
   other.data = nullptr;
   other.size = 0;
   other.capacity = 0;
@@ -35,75 +40,72 @@ DynamicArray<T>::DynamicArray(
 
 // Assigners
 template <typename T>
-DynamicArray<T> &
-DynamicArray<T>::operator=(const DynamicArray &other) { // Copy assignment
-  if (this == &other) {
-    return *this;
-  }
-
-  delete[] data;
-
+DynamicArray<T>& DynamicArray<T>::operator=(const DynamicArray& other) { // copy assignment
+  if (this == &other) return *this;
+  for (size_t i = 0; i < size; i++) data[i].~T();
+  ::operator delete(data);
   size = other.size;
-  capacity = other.capacity;
-
-  data = new T[capacity];
-
-  for (size_t i = 0; i < size; i++) {
-    data[i] = other.data[i];
-  }
-
+  capacity = other.size;
+  if (capacity == 0) { data = nullptr; return *this; }
+  data = static_cast<T*>(::operator new(capacity * sizeof(T)));
+  for (size_t i = 0; i < size; i++)
+    new (&data[i]) T(other.data[i]);
   return *this;
 }
 
 template <typename T>
-DynamicArray<T> &
-DynamicArray<T>::operator=(DynamicArray &&other) noexcept { // Move assignment
-  if (this == &other) {
-    return *this;
-  }
-
-  delete[] data;
-
+DynamicArray<T>& DynamicArray<T>::operator=(DynamicArray&& other) noexcept { // move assignment
+  if (this == &other) return *this;
+  for (size_t i = 0; i < size; i++) data[i].~T();
+  ::operator delete(data);
   data = other.data;
   size = other.size;
   capacity = other.capacity;
-
   other.data = nullptr;
   other.size = 0;
   other.capacity = 0;
-
   return *this;
 }
 
 // Access and Modifiers
 template <typename T>
-void DynamicArray<T>::resize(size_t new_capacity) { // resize if meet capacity
-  T *new_data = new T[new_capacity];
-
-  for (size_t i = 0; i < size; i++) {
-    new_data[i] = data[i];
+void DynamicArray<T>::resize(size_t new_capacity) {
+  if (new_capacity == 0) {
+    for (size_t i = 0; i < size; i++) data[i].~T(); // destroy elements first
+    ::operator delete(data); 
+    data = nullptr;
+    capacity = 0;
+    size = 0;
+    return;
   }
-
-  delete[] data;
+  T* new_data = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
+  for (size_t i = 0; i < size; i++) {
+    new (&new_data[i]) T(std::move(data[i]));
+    data[i].~T();
+  }
+  ::operator delete(data);
   data = new_data;
   capacity = new_capacity;
 }
 
 template <typename T>
-void DynamicArray<T>::push_back(
-    const T &value) { // push an element to the array
-  if (size == capacity) {
-    resize(capacity * 2); // double capacity if meet
-  }
-
-  data[size++] = value; // add last element to size pos, increase size by one
+void DynamicArray<T>::push_back(const T& value) {
+  if (size == capacity)
+    resize(capacity == 0 ? 1 : capacity * 2);
+  new (&data[size++]) T(value); // placement copy-construct
 }
 
 template <typename T>
-void DynamicArray<T>::pop_back() { // remove the last element (make it not
-                                   // accessable)
+void DynamicArray<T>::push_back(T&& value) { // move overload
+  if (size == capacity)
+    resize(capacity == 0 ? 1 : capacity * 2);
+  new (&data[size++]) T(std::move(value)); // placement move-construct
+}
+
+template <typename T>
+void DynamicArray<T>::pop_back() {
   if (size > 0) {
-    size--;
+    data[--size].~T(); // explicitly destroy the removed element
   }
 }
 

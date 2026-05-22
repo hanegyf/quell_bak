@@ -62,6 +62,13 @@ struct ExprArena {
         return e;
     }
 
+    // Move-only: owns the Expr* pointers
+    ExprArena() = default;
+    ExprArena(ExprArena&&) = default;
+    ExprArena& operator=(ExprArena&&) = default;
+    ExprArena(const ExprArena&) = delete;
+    ExprArena& operator=(const ExprArena&) = delete;
+
     ~ExprArena() {
         for (size_t i = 0; i < nodes.get_size(); ++i) delete nodes[i];
     }
@@ -120,6 +127,13 @@ struct Function {
 
     ExprArena arena;
     DynamicArray<Stmt> body;
+
+    // Move-only because ExprArena is move-only
+    Function() = default;
+    Function(Function&&) = default;
+    Function& operator=(Function&&) = default;
+    Function(const Function&) = delete;
+    Function& operator=(const Function&) = delete;
 };
 
 struct Program {
