@@ -22,12 +22,12 @@ bool Lexer::is_ident_start(char c) {
 }
 
 bool Lexer::is_ident_continue(char c) {
-    return std::isalnum(static_cast<unsigned char>(c)) || c == '_'; // is alphanumeric or underscore (bc can't start with number and be an Identifier)
+    return std::isalnum(static_cast<unsigned char>(c)) || c == '_'; // is alphanumeric or underscore
 }
 
 void Lexer::skip_ws_and_comments() { // skip all whitespace and comments (duh)
     while (!eof()) {
-        while (!eof() && std::isspace(static_cast<unsigned char>(peek()))) // while whitespace
+        while (!eof() && std::isspace(static_cast<unsigned char>(peek())))
             get();
 
         if (peek() == '#') { // comment goes till end of line
@@ -39,7 +39,7 @@ void Lexer::skip_ws_and_comments() { // skip all whitespace and comments (duh)
     }
 }
 
-Token Lexer::make(TokenKind k, size_t begin, size_t end, const char* text) const { // make a token out of stuff 
+Token Lexer::make(TokenKind k, size_t begin, size_t end, const char* text) const {
     Token t;
     t.kind = k;
     t.span.begin = begin;
@@ -48,9 +48,9 @@ Token Lexer::make(TokenKind k, size_t begin, size_t end, const char* text) const
     return t;
 }
 
-Token Lexer::make_from_slice(TokenKind k, size_t begin, size_t end) const { // make a token out of a select area
+Token Lexer::make_from_slice(TokenKind k, size_t begin, size_t end) const {
     DynamicArray<char> buf;
-    for (size_t i = begin; i < end; ++i) buf.push_back(src.c_str()[i]); // grab all text in that area
+    for (size_t i = begin; i < end; ++i) buf.push_back(src.c_str()[i]);
     buf.push_back('\0');
 
     Token t;
@@ -61,7 +61,7 @@ Token Lexer::make_from_slice(TokenKind k, size_t begin, size_t end) const { // m
     return t;
 }
 
-TokenKind Lexer::keyword_kind(const String& s) const { // convert string to TokenKind
+TokenKind Lexer::keyword_kind(const String& s) const {
   if (s == "func") return TokenKind::KwFunc;
   if (s == "let") return TokenKind::KwLet;
 
@@ -70,6 +70,7 @@ TokenKind Lexer::keyword_kind(const String& s) const { // convert string to Toke
   if (s == "else") return TokenKind::KwElse;
   if (s == "true") return TokenKind::KwTrue;
   if (s == "false") return TokenKind::KwFalse;
+  if (s == "return") return TokenKind::KwReturn; // NEW
 
   if (s == "void") return TokenKind::KwVoid;
   if (s == "qreg") return TokenKind::KwQreg;
@@ -96,23 +97,22 @@ TokenKind Lexer::keyword_kind(const String& s) const { // convert string to Toke
   return TokenKind::Identifier; // default
 }
 
-Token Lexer::lex_identifier_or_keyword() { // lex through a non number
+Token Lexer::lex_identifier_or_keyword() {
     size_t begin = pos;
-    get(); // first char
+    get();
     while (!eof() && is_ident_continue(peek())) get();
-    Token t = make_from_slice(TokenKind::Identifier, begin, pos); // make out of area
+    Token t = make_from_slice(TokenKind::Identifier, begin, pos);
     t.kind = keyword_kind(t.lexeme);
     return t;
 }
 
-Token Lexer::lex_number() { // lex through a number
+Token Lexer::lex_number() {
     size_t begin = pos;
     while (!eof() && std::isdigit(static_cast<unsigned char>(peek()))) get();
-
-    return make_from_slice(TokenKind::Number, begin, pos); // only integers for now
+    return make_from_slice(TokenKind::Number, begin, pos);
 }
 
-LexResult Lexer::lex() { // lex through the entire file
+LexResult Lexer::lex() {
     LexResult out;
 
     while (!eof()) {
@@ -122,11 +122,10 @@ LexResult Lexer::lex() { // lex through the entire file
         size_t begin = pos;
         char c = peek();
 
-        // special cases
-        if (is_ident_start(c)) { out.tokens.push_back(lex_identifier_or_keyword()); continue; } // if an identifier/keyword
-        if (std::isdigit(static_cast<unsigned char>(c))) { out.tokens.push_back(lex_number()); continue; } // if a number
-        
-        if (c == '-' && peek(1) == '>') { get(); get(); out.tokens.push_back(make(TokenKind::Arrow,  begin, pos, "->")); continue; } // if an arrow sign
+        if (is_ident_start(c)) { out.tokens.push_back(lex_identifier_or_keyword()); continue; }
+        if (std::isdigit(static_cast<unsigned char>(c))) { out.tokens.push_back(lex_number()); continue; }
+
+        if (c == '-' && peek(1) == '>') { get(); get(); out.tokens.push_back(make(TokenKind::Arrow,  begin, pos, "->")); continue; }
 
         // New 2 character operators
         if (c == '=' && peek(1) == '=') { get(); get(); out.tokens.push_back(make(TokenKind::EqEq, begin, pos, "==")); continue; }
@@ -134,7 +133,7 @@ LexResult Lexer::lex() { // lex through the entire file
         if (c == '<' && peek(1) == '=') { get(); get(); out.tokens.push_back(make(TokenKind::LtEq, begin, pos, "<=")); continue; }
         if (c == '>' && peek(1) == '=') { get(); get(); out.tokens.push_back(make(TokenKind::GtEq, begin, pos, ">=")); continue; }
 
-        switch (c) { // if punctuation / operators
+        switch (c) {
             case '(': get(); out.tokens.push_back(make(TokenKind::LParen, begin, pos, "(")); continue;
             case ')': get(); out.tokens.push_back(make(TokenKind::RParen, begin, pos, ")")); continue;
             case '{': get(); out.tokens.push_back(make(TokenKind::LBrace, begin, pos, "{")); continue;
@@ -147,7 +146,6 @@ LexResult Lexer::lex() { // lex through the entire file
             case '<': get(); out.tokens.push_back(make(TokenKind::Lt, begin, pos, "<")); continue;
             case '>': get(); out.tokens.push_back(make(TokenKind::Gt, begin, pos, ">")); continue;
 
-            // New single character ops
             case '=': get(); out.tokens.push_back(make(TokenKind::Assign, begin, pos, "=")); continue;
             case '+': get(); out.tokens.push_back(make(TokenKind::Plus, begin, pos, "+")); continue;
             case '-': get(); out.tokens.push_back(make(TokenKind::Minus, begin, pos, "-")); continue;
@@ -157,7 +155,7 @@ LexResult Lexer::lex() { // lex through the entire file
             default:
                 out.ok = false;
                 out.errors.push_back(String("Unexpected characer in lexer"));
-                get(); // consume
+                get();
                 continue;
         }
     }

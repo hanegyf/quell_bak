@@ -56,6 +56,12 @@ enum class OpCode { // operation codes
   Call,    // call absolute pc target (imm) with nargs (imm2)
   Ret,     // return; unwind nargs (imm) and keep return value on stack
 
+  // Dynamic qubit/bit addressing
+  GateR1,  // apply gate to qubit creg[src1]
+  GateR2,    // apply controlled gate to qubits creg[src1], creg[src2]
+  InitR,     // INIT creg[src1]
+  MeasureR,  // MEASURE creg[src1] creg[src2]
+
   End
 };
 

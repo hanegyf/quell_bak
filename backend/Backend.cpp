@@ -594,36 +594,11 @@ void Backend::run(RNG &rng) {              // run code
         long long base = frame_base_stack.peek();
         long long idx = instr.imm;
         if (idx < 0) throw std::runtime_error("ARG index < 0");
-
-        // Access value_stack[base + idx] without random access by copying, O(n) but small
-        Stack<long long> tmp;
-        long long needed = base + idx;
-
-        // value_stack has size() so pop to tmp until reach needed, but can't index, so pop all, then rebuild.
-        DynamicArray<long long> vals;
-        while (!value_stack.empty()) {
-          vals.push_back(value_stack.peek());
-          value_stack.pop();
-        }
-        // vals is reversed (top first), rebuild and also read element.
-        long long argval = 0;
-        for (long long j = static_cast<long long>(vals.get_size()) - 1; j >= 0; --j) {
-          value_stack.push(vals[static_cast<size_t>(j)]);
-        }
-        // Now need to extract the needed-th element by another pass, TODO:add indexing to stack so all this takes less time
-        vals = DynamicArray<long long>();
-        while (!value_stack.empty()) {
-          vals.push_back(value_stack.peek());
-          value_stack.pop();
-        }
-        for (long long j = static_cast<long long>(vals.get_size()) - 1; j >= 0; --j) {
-          long long pos = (static_cast<long long>(vals.get_size()) - 1) - j;
-          long long v = vals[static_cast<size_t>(j)];
-          if (pos == needed) argval = v;
-          value_stack.push(v);
-        }
-
-        creg[instr.dst] = argval;
+        long long pos = base + idx;
+        if (pos < 0) throw std::runtime_error("ARG computed index < 0");
+        if (static_cast<size_t>(pos) >= value_stack.size())
+            throw std::runtime_error("ARG index out of range for value stack");
+        creg[instr.dst] = value_stack.at(static_cast<size_t>(pos));
         pc += 1;
         continue;
       }

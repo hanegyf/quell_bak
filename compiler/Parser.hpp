@@ -40,11 +40,16 @@ class Parser { // actual parser
         bool parse_let_reg(Stmt& out);
         bool parse_let_scalar(Stmt& out);
         bool parse_if(Stmt& out);
+        bool parse_return(Stmt& out);
 
         bool parse_gate_stmt(Stmt& out);
         bool parse_operand(Operand& out);
 
         bool parse_reg_type_size(size_t& outSize, bool& isQReg);
+
+        // types and params
+        bool parse_type_ref(TypeRef& out);
+        bool parse_param_list(DynamicArray<Param>& out_params);
 
         // expressions (precedence climbing)
         Expr* parse_expr();

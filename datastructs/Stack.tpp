@@ -35,3 +35,14 @@ template <typename T> bool Stack<T>::empty() const {
 template <typename T> size_t Stack<T>::size() const {
   return data.get_size();
 } // size
+
+// Indexing
+template <typename T> T &Stack<T>::at(size_t index) {
+  if (index >= data.get_size()) throw std::out_of_range("Stack index out of range");
+  return data[index];
+}
+
+template <typename T> const T &Stack<T>::at(size_t index) const {
+  if (index >= data.get_size()) throw std::out_of_range("Stack index out of range");
+  return data[index];
+}
