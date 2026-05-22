@@ -7,6 +7,7 @@
 #include "../datastructs/RNG.hpp"
 #include "../datastructs/StateVector.hpp"
 #include "../datastructs/String.hpp"
+#include "../datastructs/Stack.hpp"
 #include "Instruction.hpp"
 #include <cstddef>
 

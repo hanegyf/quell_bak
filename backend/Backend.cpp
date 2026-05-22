@@ -290,6 +290,45 @@ Instruction Backend::parse_instruction_line(
     return instr;
   }
 
+  // Function/call stack ops ----
+  //   PUSH reg
+  //   POP reg
+  //   ARG dst index
+  //   CALL target_pc nargs
+  //   RET nargs
+  if (opcode == String("PUSH")) {
+    Instruction instr;
+    instr.op = OpCode::Push;
+    instr.src1 = parse_size_t(p);
+    return instr;
+  }
+  if (opcode == String("POP")) {
+    Instruction instr;
+    instr.op = OpCode::Pop;
+    instr.dst = parse_size_t(p);
+    return instr;
+  }
+  if (opcode == String("ARG")) {
+    Instruction instr;
+    instr.op = OpCode::ArgLoad;
+    instr.dst = parse_size_t(p);
+    instr.imm = parse_i64(p); // arg index
+    return instr;
+  }
+  if (opcode == String("CALL")) {
+    Instruction instr;
+    instr.op = OpCode::Call;
+    instr.imm = parse_i64(p);  // target pc
+    instr.imm2 = parse_i64(p); // nargs
+    return instr;
+  }
+  if (opcode == String("RET")) {
+    Instruction instr;
+    instr.op = OpCode::Ret;
+    instr.imm = parse_i64(p); // nargs
+    return instr;
+  }
+
   // None of the above == gate
   Instruction instr;
   instr.op = OpCode::Gate;
@@ -449,12 +488,10 @@ void Backend::run(RNG &rng) {              // run code
   for (size_t shot = 0; shot < num_shots; ++shot) {
     Statevector state(num_qubits);
 
-    // classical bits used for histogram encoding (kept as size_t for minimal changes)
     DynamicArray<size_t> classical_bits;
     for (size_t i = 0; i < num_bits; ++i)
       classical_bits.push_back(0);
 
-    // classical register file (new): supports arithmetic + if/jumps
     DynamicArray<long long> creg;
     for (size_t i = 0; i < num_bits; ++i)
       creg.push_back(0);
@@ -463,7 +500,11 @@ void Backend::run(RNG &rng) {              // run code
     for (size_t i = 0; i < num_qubits; ++i)
       locked.push_back(0);
 
-    // Use a program counter so JMP/JZ/JNZ work
+    // Call stack
+    Stack<long long> value_stack;    // values + args + return values
+    Stack<long long> return_pc_stack;
+    Stack<long long> frame_base_stack;
+
     long long pc = 0;
     while (pc >= 0 && static_cast<size_t>(pc) < program.get_size()) {
       const Instruction &instr = program[static_cast<size_t>(pc)];
@@ -532,6 +573,103 @@ void Backend::run(RNG &rng) {              // run code
         continue;
       }
 
+      // Stack ops
+      if (instr.op == OpCode::Push) {
+        if (instr.src1 >= num_bits) throw std::runtime_error("PUSH reg out of range");
+        value_stack.push(creg[instr.src1]);
+        pc += 1;
+        continue;
+      }
+      if (instr.op == OpCode::Pop) {
+        if (instr.dst >= num_bits) throw std::runtime_error("POP reg out of range");
+        if (value_stack.empty()) throw std::runtime_error("POP from empty stack");
+        creg[instr.dst] = value_stack.peek();
+        value_stack.pop();
+        pc += 1;
+        continue;
+      }
+      if (instr.op == OpCode::ArgLoad) {
+        if (instr.dst >= num_bits) throw std::runtime_error("ARG dst out of range");
+        if (frame_base_stack.empty()) throw std::runtime_error("ARG with no frame");
+        long long base = frame_base_stack.peek();
+        long long idx = instr.imm;
+        if (idx < 0) throw std::runtime_error("ARG index < 0");
+
+        // Access value_stack[base + idx] without random access by copying, O(n) but small
+        Stack<long long> tmp;
+        long long needed = base + idx;
+
+        // value_stack has size() so pop to tmp until reach needed, but can't index, so pop all, then rebuild.
+        DynamicArray<long long> vals;
+        while (!value_stack.empty()) {
+          vals.push_back(value_stack.peek());
+          value_stack.pop();
+        }
+        // vals is reversed (top first), rebuild and also read element.
+        long long argval = 0;
+        for (long long j = static_cast<long long>(vals.get_size()) - 1; j >= 0; --j) {
+          value_stack.push(vals[static_cast<size_t>(j)]);
+        }
+        // Now need to extract the needed-th element by another pass, TODO:add indexing to stack so all this takes less time
+        vals = DynamicArray<long long>();
+        while (!value_stack.empty()) {
+          vals.push_back(value_stack.peek());
+          value_stack.pop();
+        }
+        for (long long j = static_cast<long long>(vals.get_size()) - 1; j >= 0; --j) {
+          long long pos = (static_cast<long long>(vals.get_size()) - 1) - j;
+          long long v = vals[static_cast<size_t>(j)];
+          if (pos == needed) argval = v;
+          value_stack.push(v);
+        }
+
+        creg[instr.dst] = argval;
+        pc += 1;
+        continue;
+      }
+      if (instr.op == OpCode::Call) {
+        long long target_pc = instr.imm;
+        long long nargs = instr.imm2;
+        if (target_pc < 0) throw std::runtime_error("CALL target < 0");
+        if (nargs < 0) throw std::runtime_error("CALL nargs < 0");
+        // push return pc (next instruction)
+        return_pc_stack.push(pc + 1);
+
+        // frame base points to where args begin on the value stack
+        long long base = static_cast<long long>(value_stack.size()) - nargs;
+        if (base < 0) throw std::runtime_error("CALL stack underflow for args");
+        frame_base_stack.push(base);
+
+        pc = target_pc;
+        continue;
+      }
+      if (instr.op == OpCode::Ret) {
+        long long nargs = instr.imm;
+        if (nargs < 0) throw std::runtime_error("RET nargs < 0");
+        if (return_pc_stack.empty() || frame_base_stack.empty())
+          throw std::runtime_error("RET with empty call stack");
+
+        // Return value is expected to be on top of value_stack.
+        if (value_stack.empty()) throw std::runtime_error("RET missing return value");
+        long long retv = value_stack.peek();
+        value_stack.pop();
+
+        // Pop args (nargs) + clear frame base record,no locals are stored; if locals added later, use another count
+        for (long long k = 0; k < nargs; ++k) {
+          if (value_stack.empty()) throw std::runtime_error("RET stack underflow");
+          value_stack.pop();
+        }
+
+        frame_base_stack.pop();
+
+        // Push return value back for caller
+        value_stack.push(retv);
+
+        pc = return_pc_stack.peek();
+        return_pc_stack.pop();
+        continue;
+      }
+
       // quantum execution
       if (instr.op == OpCode::Init) {
         if (instr.target >= num_qubits)
@@ -582,7 +720,6 @@ void Backend::run(RNG &rng) {              // run code
         break;
       }
 
-      // If we reach here, it's an unknown opcode
       throw std::runtime_error("Unknown opcode during execution");
     }
 

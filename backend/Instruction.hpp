@@ -49,6 +49,13 @@ enum class OpCode { // operation codes
   JmpIfZero,  // if (creg[src1] == 0) pc += imm
   JmpIfNonZero, // if (creg[src1] != 0) pc += imm
 
+  // Call stack stuff for recursion
+  Push,    // push creg[src1]
+  Pop,     // pop -> creg[dst]
+  ArgLoad, // creg[dst] = arg[imm]
+  Call,    // call absolute pc target (imm) with nargs (imm2)
+  Ret,     // return; unwind nargs (imm) and keep return value on stack
+
   End
 };
 
@@ -65,6 +72,8 @@ struct Instruction {               // individual instructions
   size_t src1 = 0;
   size_t src2 = 0;
   long long imm = 0;
+
+  long long imm2 = 0; // second immediate for CALL (nargs)
 };
 
 #endif
