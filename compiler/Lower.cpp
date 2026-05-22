@@ -48,9 +48,25 @@ static String fmt1i(const char* op, long long imm) {
   return String(buf);
 }
 
+// Format a parameterized gate line, e.g. "RX 1.5707 2"
+static String fmt_param_gate(const char* name, double param, size_t target) {
+  char buf[256];
+  std::snprintf(buf, sizeof(buf), "%s %g %zu", name, param, target);
+  return String(buf);
+}
+
 static const Function* find_main(const Program& p) { // find any functions named main as an entry point
   for (size_t i = 0; i < p.functions.get_size(); ++i) {
     if (p.functions[i].name == String("main"))
+      return &p.functions[i];
+  }
+  return nullptr;
+}
+
+// Find any function by name (for call lowering)
+static const Function* find_function(const Program& p, const String& name) {
+  for (size_t i = 0; i < p.functions.get_size(); ++i) {
+    if (p.functions[i].name == name)
       return &p.functions[i];
   }
   return nullptr;
@@ -96,6 +112,17 @@ static void emit_classical(LowerResult& r, const String& line) {
   r.instr_lines.push_back(line);
 }
 
+// Forward declaration so lower_expr can call lower_stmt_list indirectly via call lowering
+static bool lower_stmt_list(LowerResult& r,
+                            const DynamicArray<Stmt>& body,
+                            const HashTable<String, QRegInfo>& qregs,
+                            const HashTable<String, BRegInfo>& bregs,
+                            HashTable<String, ScalarInfo>& scalars,
+                            size_t& next_temp_reg);
+
+// Forward declaration of the full program pointer so call lowering can find functions
+static const Program* g_program = nullptr;
+
 // expression lowering, returns the classical register index containing the expression result
 static size_t lower_expr(LowerResult& r,
                          const Expr* e,
@@ -120,6 +147,65 @@ static size_t lower_expr(LowerResult& r,
       return 0;
     }
     return scalars.at(e->var_name).reg;
+  }
+
+  // Function call lowering using PUSH/CALL/POP
+  if (e->kind == ExprKind::Call) {
+    if (!g_program) { push_err(r, "Call expression with no program context"); return 0; }
+
+    const Function* callee = find_function(*g_program, e->call_name);
+    if (!callee) { push_err(r, "Call to unknown function"); return 0; }
+
+    // push each argument onto the value stack
+    long long nargs = static_cast<long long>(e->call_args.get_size());
+    for (size_t ai = 0; ai < e->call_args.get_size(); ++ai) {
+      size_t arg_reg = lower_expr(r, e->call_args[ai], scalars, next_temp_reg);
+      emit_classical(r, fmt2("PUSH", 0, arg_reg)); // PUSH src — reuse fmt2 with dummy dst=0
+      // PUSH uses src1 field; the line format is "PUSH <reg>"
+      // fmt2 would emit "PUSH 0 arg_reg" which is wrong, use a dedicated formatter:
+      {
+        char buf[128];
+        std::snprintf(buf, sizeof(buf), "PUSH %zu", arg_reg);
+        // overwrite the last line we just pushed with the correct one
+        r.instr_lines[r.instr_lines.get_size() - 1] = String(buf);
+      }
+    }
+
+
+    // Save caller scalars, create fresh scope for callee
+    HashTable<String, ScalarInfo> callee_scalars;
+
+    // Bind parameters: pop from value_stack in reverse (last arg on top)
+    // For inline lowering the args are already in regs; bind by position.
+    for (size_t pi = 0; pi < callee->params.get_size(); ++pi) {
+      size_t arg_reg = lower_expr(r, e->call_args[pi], scalars, next_temp_reg);
+      ScalarInfo si;
+      si.type = (callee->params[pi].type.kind == TypeKind::Bool) ? ScalarType::Bool : ScalarType::Int;
+      si.reg = arg_reg;
+      callee_scalars.insert(callee->params[pi].name, si);
+    }
+
+    // Allocate a register for the return value
+    size_t ret_reg = next_temp_reg++;
+    emit_classical(r, fmt2i("MOVI", ret_reg, 0)); // default 0
+
+    // Lower callee body; Return stmts will MOV into ret_reg.
+    // Store ret_reg in a known temp scalar name that Return lowering will detect.
+    ScalarInfo ret_info;
+    ret_info.type = ScalarType::Int;
+    ret_info.reg = ret_reg;
+    callee_scalars.insert(String("__ret__"), ret_info);
+
+    // share the global qubit/bit space, so pass empty tables (no new regs declared inside a non-main function for now).
+    HashTable<String, QRegInfo> empty_qregs;
+    HashTable<String, BRegInfo> empty_bregs;
+    lower_stmt_list(r, callee->body, empty_qregs, empty_bregs, callee_scalars, next_temp_reg);
+
+    {
+      (void)nargs; // suppress warning
+    }
+
+    return ret_reg;
   }
 
   // binary ops
@@ -148,13 +234,6 @@ static size_t lower_expr(LowerResult& r,
   return dst;
 }
 
-static bool lower_stmt_list(LowerResult& r,
-                            const DynamicArray<Stmt>& body,
-                            const HashTable<String, QRegInfo>& qregs,
-                            const HashTable<String, BRegInfo>& bregs,
-                            HashTable<String, ScalarInfo>& scalars,
-                            size_t& next_temp_reg);
-
 // lower a single stmt
 static bool lower_stmt(LowerResult& r,
                        const Stmt& s,
@@ -164,6 +243,17 @@ static bool lower_stmt(LowerResult& r,
                        size_t& next_temp_reg) {
   if (s.kind == Stmt::Kind::Empty || s.kind == Stmt::Kind::LetReg)
     return true;
+
+  // Return stmt — move return expr result into __ret__ if present
+  if (s.kind == Stmt::Kind::Return) {
+    if (s.ret_expr && scalars.contains(String("__ret__"))) {
+      size_t val = lower_expr(r, s.ret_expr, scalars, next_temp_reg);
+      size_t ret_reg = scalars.at(String("__ret__")).reg;
+      emit_classical(r, fmt2("MOV", ret_reg, val));
+    }
+    // void return or no __ret__ context: nothing to emit
+    return r.ok;
+  }
 
   if (s.kind == Stmt::Kind::LetScalar) {
     // allocate scalar to a classical reg
@@ -264,6 +354,25 @@ static bool lower_stmt(LowerResult& r,
       return true;
     }
 
+    // Parameterized 1-qubit gates (RX, RY, RZ, PHASE)
+    if (g.kind == GateStmtKind::RX || g.kind == GateStmtKind::RY ||
+        g.kind == GateStmtKind::RZ || g.kind == GateStmtKind::PHASE) {
+
+      if (!need_ops(1)) return false;
+      if (!g.has_param) { push_err(r, "Parameterized gate missing parameter"); return false; }
+
+      size_t q = 0;
+      if (!resolve_qubit_operand(g.ops[0], qregs, q, r)) return false;
+
+      const char* name =
+          (g.kind == GateStmtKind::RX)    ? "RX"    :
+          (g.kind == GateStmtKind::RY)    ? "RY"    :
+          (g.kind == GateStmtKind::RZ)    ? "RZ"    : "PHASE";
+
+      r.instr_lines.push_back(fmt_param_gate(name, g.param, q));
+      return true;
+    }
+
     // controlled 2-qubit gates (control first, target second)
     if (g.kind == GateStmtKind::CX || g.kind == GateStmtKind::CNOT || g.kind == GateStmtKind::CZ) {
       if (!need_ops(2)) return false;
@@ -338,6 +447,8 @@ static bool lower_stmt_list(LowerResult& r,
 LowerResult lower_to_q(const Program& p) { // lower fully down to .q format
   LowerResult r;
 
+  g_program = &p; // Set global program pointer for call lowering
+
   const Function* main_fn = find_main(p); // main function
   if (!main_fn) {
     push_err(r, "No entry function func main() -> void found");
@@ -410,5 +521,6 @@ LowerResult lower_to_q(const Program& p) { // lower fully down to .q format
     return r;
   }
 
+  g_program = nullptr; // clear global pointer when done
   return r;
 }

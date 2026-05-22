@@ -394,6 +394,60 @@ void Backend::load(const String &filepath) { // load from file path to program
     header_locked = true;
     Instruction instr = parse_instruction_line(line); // instruction from line
     program.push_back(instr);
+
+     // Dynamic-address gate/init/measure opcodes
+      if (instr.op == OpCode::GateR1) {
+        // apply gate to qubit at creg[src1]
+        if (instr.src1 >= num_bits) throw std::runtime_error("GateR1 src1 out of range");
+        size_t q = static_cast<size_t>(creg[instr.src1]);
+        if (q >= num_qubits) throw std::runtime_error("GateR1 qubit index out of range");
+        if (locked[q]) throw std::runtime_error("GateR1 applied to measured qubit without INIT");
+        Matrix gate = resolve_gate(instr.gate, instr.parameter);
+        state.apply_gate(gate, q, std::nullopt);
+        pc += 1;
+        continue;
+      }
+
+      if (instr.op == OpCode::GateR2) {
+        // apply controlled gate: control=creg[src1], target=creg[src2]
+        if (instr.src1 >= num_bits || instr.src2 >= num_bits) throw std::runtime_error("GateR2 reg out of range");
+        size_t qc = static_cast<size_t>(creg[instr.src1]);
+        size_t qt = static_cast<size_t>(creg[instr.src2]);
+        if (qc >= num_qubits || qt >= num_qubits) throw std::runtime_error("GateR2 qubit index out of range");
+        if (locked[qc] || locked[qt]) throw std::runtime_error("GateR2 applied to measured qubit without INIT");
+        Matrix gate = resolve_gate(instr.gate, instr.parameter);
+        state.apply_gate(gate, qt, qc);
+        pc += 1;
+        continue;
+      }
+
+      if (instr.op == OpCode::InitR) {
+        // INIT qubit at creg[src1]
+        if (instr.src1 >= num_bits) throw std::runtime_error("InitR src1 out of range");
+        size_t q = static_cast<size_t>(creg[instr.src1]);
+        if (q >= num_qubits) throw std::runtime_error("InitR qubit index out of range");
+        reset_qubit(state, q);
+        locked[q] = 0;
+        pc += 1;
+        continue;
+      }
+
+      if (instr.op == OpCode::MeasureR) {
+        // MEASURE qubit at creg[src1] into bit at creg[src2]
+        if (instr.src1 >= num_bits || instr.src2 >= num_bits) throw std::runtime_error("MeasureR reg out of range");
+        size_t q = static_cast<size_t>(creg[instr.src1]);
+        size_t b = static_cast<size_t>(creg[instr.src2]);
+        if (q >= num_qubits) throw std::runtime_error("MeasureR qubit index out of range");
+        if (b >= num_bits)   throw std::runtime_error("MeasureR bit index out of range");
+        size_t result = 0;
+        measure_qubit(state, q, result, rng);
+        classical_bits[b] = result;
+        creg[b] = static_cast<long long>(result);
+        locked[q] = 1;
+        pc += 1;
+        continue;
+      }
+
     if (instr.op == OpCode::End)
       break; // if end of code (measurement of all for now)
   }
